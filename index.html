@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Expériences des portes ouvertes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Caveat+Brush&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Un tableau noir de salle de physique : ardoise verte, craie blanche, trois craies de couleur. Une seule colonne pensée pour le téléphone. */
+  --board:#1c2824;
+  --board-2:#22302b;
+  --board-3:#283832;
+  --chalk:#ece8dc;
+  --chalk-dim:#b4bcb5;
+  --line:rgba(236,232,220,.16);
+  --yellow:#f3d36b;
+  --pink:#f39ab0;
+  --blue:#8ec8ea;
+  --display:"Caveat Brush","Segoe Print","Bradley Hand",cursive;
+  --body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{background:var(--board)}
+body{
+  margin:0;background:var(--board);color:var(--chalk);
+  font-family:var(--body);font-size:17px;line-height:1.55;
+  background-image:
+    radial-gradient(ellipse 70% 40% at 15% 0%,rgba(255,255,255,.045),transparent 70%),
+    radial-gradient(ellipse 60% 50% at 90% 55%,rgba(255,255,255,.03),transparent 70%);
+  -webkit-text-size-adjust:100%;
+}
+[hidden]{display:none!important}
+:where(button.back,button.brand,.next button,button.link-inline){background:none;border:0;margin:0;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left}
+.card-link{cursor:pointer}
+.card-link:focus-visible,button.back:focus-visible,button.brand:focus-visible,.next button:focus-visible,button.link-inline:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.link-inline{color:var(--blue);text-decoration:underline}
+a{color:var(--blue)}
+.topbar{
+  position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:8px 16px;background:rgba(28,40,36,.94);border-bottom:1px solid var(--line);
+}
+.brand{font-family:var(--display);font-size:1.4rem;line-height:1;color:var(--chalk);text-decoration:none;padding:6px 0}
+.brand span{color:var(--yellow)}
+.sound{
+  white-space:nowrap;flex:none;
+  display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:.92rem;font-weight:700;color:var(--chalk);
+  background:transparent;border:2px solid rgba(236,232,220,.55);border-radius:999px;min-height:40px;padding:4px 14px 4px 10px;cursor:pointer;
+}
+.sound svg{width:20px;height:20px}
+.sound[aria-pressed="true"]{background:var(--yellow);border-color:var(--yellow);color:var(--board)}
+main{max-width:680px;margin:0 auto;padding:8px 16px 56px}
+
+/* Accueil */
+.hero h1{font-family:var(--display);font-weight:400;font-size:clamp(2.6rem,11vw,3.6rem);line-height:.98;margin:.45em 0 .3em;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--yellow)}
+.hero p{margin:0 0 .6em;color:var(--chalk-dim);max-width:54ch}
+.cards{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:12px}
+.cards .card-link{
+  display:grid;grid-template-columns:62px 1fr 18px;gap:14px;align-items:center;
+  padding:14px 14px 14px 12px;border:1px solid var(--line);border-radius:14px;background:var(--board-2);
+  color:inherit;text-decoration:none;
+}
+.cards .card-link:hover{border-color:rgba(243,211,107,.6)}
+.cards svg{width:62px;height:62px;display:block}
+.cards .num{font-family:var(--display);color:var(--yellow);font-size:1.15rem;line-height:1}
+.cards h2{font-family:var(--display);font-weight:400;font-size:1.6rem;line-height:1.02;margin:2px 0 4px;text-wrap:balance}
+.cards p{margin:0;color:var(--chalk-dim);font-size:.95rem;line-height:1.4}
+.cards .go{color:var(--chalk-dim);font-size:1.2rem}
+.foot{margin-top:28px;padding-top:14px;border-top:1px solid var(--line);color:var(--chalk-dim);font-size:.92rem}
+
+/* Pages d'expérience */
+.back{display:inline-block;color:var(--chalk-dim);text-decoration:none;font-size:.95rem;padding:10px 0 2px}
+.eyebrow{font-family:var(--display);color:var(--yellow);font-size:1.3rem;line-height:1;margin:10px 0 2px}
+.exp h1{font-family:var(--display);font-weight:400;font-size:clamp(2.3rem,9.5vw,3.2rem);line-height:1;margin:0 0 10px;text-wrap:balance}
+.stand{margin:0 0 14px;color:var(--chalk-dim)}
+.stand b{color:var(--chalk)}
+.stage{position:relative;border-radius:14px;overflow:hidden;background:var(--board-3);border:1px solid var(--line)}
+.stage canvas{display:block;width:min(100%, calc((100vh - 70px) * var(--ar, 1)));height:auto;margin-inline:auto;touch-action:manipulation}
+@supports (height:100svh){.stage canvas{width:min(100%, calc((100svh - 70px) * var(--ar, 1)))}}
+@media (max-width:480px){.stage{margin-inline:-16px;border-radius:0;border-left:0;border-right:0}}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+.btn{
+  font:inherit;font-size:1rem;font-weight:700;color:var(--chalk);background:transparent;
+  border:2px solid rgba(236,232,220,.65);border-radius:12px;min-height:46px;padding:8px 14px;cursor:pointer;
+}
+.btn.primary{background:var(--yellow);border-color:var(--yellow);color:var(--board)}
+.btn[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:var(--board)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.sound:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.field{flex:1 1 100%;display:grid;gap:2px;margin-top:4px}
+.field label{font-size:.92rem;color:var(--chalk-dim)}
+.field label output{color:var(--chalk);font-weight:700}
+input[type="range"]{width:100%;height:42px;accent-color:var(--yellow);margin:0}
+select{
+  font:inherit;font-size:1rem;color:var(--chalk);background:var(--board-2);border:2px solid rgba(236,232,220,.65);
+  border-radius:12px;min-height:46px;padding:6px 10px;width:100%;
+}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg .btn{min-height:40px;padding:6px 12px;font-size:.95rem}
+.status{
+  min-height:3.1em;margin:12px 0 10px;padding:9px 12px;border-left:3px solid var(--yellow);
+  background:rgba(243,211,107,.07);border-radius:0 10px 10px 0;
+}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:8px;margin:0 0 6px}
+.ro{padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:var(--board-2)}
+.ro span{display:block;font-size:.8rem;line-height:1.3;color:var(--chalk-dim)}
+.ro b{font-size:1.12rem;font-variant-numeric:tabular-nums}
+.chain{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0 4px;font-size:.92rem}
+.chain .st{padding:4px 11px;border-radius:999px;border:1px solid var(--line);color:var(--chalk-dim)}
+.chain .st.on{border-color:var(--yellow);background:var(--yellow);color:var(--board);font-weight:700}
+.chain .ar{color:var(--chalk-dim)}
+.mes-wrap{margin:14px 0 4px;overflow-x:auto}
+.mes{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.95rem}
+.mes caption{text-align:left;font-family:var(--display);font-size:1.45rem;color:var(--yellow);padding-bottom:4px}
+.mes th{text-align:left;font-size:.8rem;font-weight:400;color:var(--chalk-dim);padding:4px 8px;border-bottom:1px solid var(--line)}
+.mes td{padding:6px 8px;border-bottom:1px solid var(--line)}
+.mes td:last-child,.mes th:last-child{text-align:right}
+.mes td.empty{color:var(--chalk-dim);text-align:left}
+.btn.small{min-height:38px;padding:4px 12px;font-size:.92rem;margin-top:8px}
+.part{margin-top:34px;padding-top:16px;border-top:2px dashed var(--line)}
+.part-title{font-family:var(--display);font-weight:400;font-size:clamp(2rem,8vw,2.7rem);line-height:1;margin:0 0 10px;text-wrap:balance}
+.text h2{font-family:var(--display);font-weight:400;font-size:1.8rem;line-height:1.05;color:var(--yellow);margin:24px 0 6px}
+.text p{margin:0 0 .85em;max-width:64ch}
+.aside{margin:20px 0 6px;padding:12px 16px 6px;border:2px dashed rgba(243,154,176,.6);border-radius:14px}
+.aside h3{font-family:var(--display);font-weight:400;color:var(--pink);font-size:1.55rem;line-height:1.05;margin:0 0 6px}
+.next{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);display:grid;gap:6px}
+.next a,.next button{font-family:var(--display);font-size:1.45rem;color:var(--chalk);text-decoration:none;line-height:1.1}
+.next a span,.next button span{color:var(--yellow)}
+.next .home{font-family:var(--body);font-size:.95rem;color:var(--chalk-dim)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <button type="button" class="brand" data-go="">Portes ouvertes <span>·</span> Physique</button>
+  <button class="sound" id="soundBtn" type="button" aria-pressed="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path id="soundWaves" d="M17 9l4 6M21 9l-4 6"/></svg>
+    <span id="soundLbl">Son coupé</span>
+  </button>
+</header>
+
+<main>
+<!-- ===================== ACCUEIL ===================== -->
+<section class="view" data-view="home" id="view-home">
+  <div class="hero">
+    <h1>Six expériences <em>à comprendre</em></h1>
+    <p>Vous avez vu l’expérience sur le stand ? Ici, une courte animation et quelques lignes pour comprendre ce qui se passe.</p>
+    <p>Chaque stand a son QR code, mais tout est aussi accessible depuis cette page.</p>
+  </div>
+  <ul class="cards">
+    <li><div class="card-link" role="link" tabindex="0" data-go="diapason">
+      <svg viewBox="0 0 64 64" fill="none" stroke="#ece8dc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="44" width="40" height="13" rx="2" stroke="#c8995f"/><path d="M26 44v-6M20 12v18q0 8 6 8t6-8V12"/><path d="M50 22a10 10 0 0 1 0 16M55 17a17 17 0 0 1 0 26" stroke="#8ec8ea"/></svg>
+      <div><div class="num">1</div><h2>Les diapasons qui se répondent</h2><p>Un diapason peut-il chanter sans qu’on le touche ?</p></div>
+      <span class="go" aria-hidden="true">→</span></div></li>
+    <li><div class="card-link" role="link" tabindex="0" data-go="eolienne">
+      <svg viewBox="0 0 64 64" fill="none" stroke="#ece8dc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M30 26l-2 32h8l-2-32"/><path d="M32 23L32 4M32 23l16 10M32 23L16 33"/><circle cx="32" cy="23" r="3"/><circle cx="54" cy="52" r="4" stroke="#f3d36b"/><path d="M54 44v-3M60 46l2-2M48 46l-2-2" stroke="#f3d36b"/></svg>
+      <div><div class="num">2</div><h2>La petite éolienne</h2><p>Du vent à la lumière d’une ampoule.</p></div>
+      <span class="go" aria-hidden="true">→</span></div></li>
+    <li><div class="card-link" role="link" tabindex="0" data-go="cloche">
+      <svg viewBox="0 0 64 64" fill="none" stroke="#ece8dc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 54V32a18 18 0 0 1 36 0v22"/><path d="M8 55h48"/><path d="M24 49a8 8 0 0 1 16 0z"/><path d="M2 38h60" stroke="#ff5a4f"/></svg>
+      <div><div class="num">3</div><h2>La sonnette dans le vide</h2><p>Le son s’éteint, le laser passe toujours. Et l’eau qui pétille sous vide.</p></div>
+      <span class="go" aria-hidden="true">→</span></div></li>
+    <li><div class="card-link" role="link" tabindex="0" data-go="chute">
+      <svg viewBox="0 0 64 64" fill="none" stroke="#ece8dc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="22" cy="44" r="8"/><circle cx="44" cy="44" r="5" stroke="#c8995f"/><path d="M22 8v24M44 8v28" stroke-dasharray="3 5" opacity=".6"/><path d="M6 57h52"/></svg>
+      <div><div class="num">4</div><h2>La chute des objets</h2><p>Le plus lourd tombe-t-il plus vite ?</p></div>
+      <span class="go" aria-hidden="true">→</span></div></li>
+    <li><div class="card-link" role="link" tabindex="0" data-go="balle">
+      <svg viewBox="0 0 64 64" fill="none" stroke="#ece8dc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 60V46h16v14z"/><path d="M28 44c-2-8-2-16 0-24M36 44c2-8 2-16 0-24" stroke="#8ec8ea" opacity=".8"/><circle cx="32" cy="15" r="7" stroke="#f3d36b"/></svg>
+      <div><div class="num">5</div><h2>La balle et le sèche-cheveux</h2><p>Pourquoi la balle ne s’échappe-t-elle pas ?</p></div>
+      <span class="go" aria-hidden="true">→</span></div></li>
+    <li><div class="card-link" role="link" tabindex="0" data-go="feuille">
+      <svg viewBox="0 0 64 64" fill="none" stroke="#ece8dc" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 30q28-2 46 16"/><path d="M8 22h22M10 16h16M36 26l12 6" stroke="#8ec8ea"/><path d="M30 54V40M25 45l5-5 5 5" stroke="#f3d36b"/></svg>
+      <div><div class="num">6</div><h2>La feuille qui se soulève</h2><p>On souffle dessus, et elle monte. Pourquoi ?</p></div>
+      <span class="go" aria-hidden="true">→</span></div></li>
+  </ul>
+  <p class="foot">Les animations simplifient la réalité : les mouvements rapides sont ralentis et certains objets agrandis. Le son est coupé au départ ; le bouton en haut à droite l’active.</p>
+</section>
+
+<!-- ===================== 1. DIAPASONS ===================== -->
+<section class="view exp" data-view="diapason" id="view-diapason" hidden>
+  <button type="button" class="back" data-go="">← Toutes les expériences</button>
+  <p class="eyebrow">Expérience 1</p>
+  <h1>Les diapasons qui se répondent</h1>
+  <p class="stand"><b>Sur le stand :</b> deux diapasons identiques de 440 Hz sont fixés sur des caisses en bois qui se font face. On frappe le premier (A), on pose un instant la main sur A, puis, quelques secondes plus tard, sur B.</p>
+  <div class="stage"><canvas id="cv-diapason" role="img" aria-label="Deux diapasons sur leurs caisses, face à face. Le son passe de l’un à l’autre."></canvas></div>
+  <div class="controls">
+    <button class="btn primary" id="dp-strike" type="button">Frapper A</button>
+    <button class="btn" id="dp-handA" type="button">Main sur A</button>
+    <button class="btn" id="dp-handB" type="button">Main sur B</button>
+    <button class="btn" id="dp-cav" type="button" aria-pressed="false">Mettre le cavalier sur B</button>
+    <button class="btn" id="dp-reset" type="button">Recommencer</button>
+  </div>
+  <p class="status" id="st-diapason" aria-live="polite"></p>
+  <div class="readouts">
+    <div class="ro"><span>Vibration de A</span><b id="ro-dpa">0 %</b></div>
+    <div class="ro"><span>Vibration de B</span><b id="ro-dpb">0 %</b></div>
+    <div class="ro"><span>Fréquence propre de B</span><b id="ro-dpfb">440 Hz</b></div>
+  </div>
+  <div class="text">
+    <h2>Ce que l’on observe</h2>
+    <p>On frappe A : au bout de quelques secondes, B vibre aussi, alors que personne ne l’a touché. On fait taire A avec la main : B continue de chanter tout seul. On fait ensuite taire B : c’est A qui chante à nouveau.</p>
+    <p>Avec un cavalier, une petite masse fixée sur une branche de B, rien de tout cela ne se produit.</p>
+    <h2>Pourquoi ?</h2>
+    <p>Un diapason frappé vibre 440 fois par seconde : c’est le la qui sert de référence aux musiciens. Ses branches poussent l’air, la caisse en bois amplifie, et cette vibration de l’air, le son, voyage jusqu’à B.</p>
+    <p>À chaque passage, l’air donne une minuscule poussée aux branches de B. Comme B est accordé sur la même fréquence, chaque poussée arrive au bon moment et s’ajoute aux précédentes, comme quand on pousse une balançoire en rythme. C’est la <strong>résonance</strong>.</p>
+    <p>Le son fait aussi le chemin inverse. Dès qu’on retire la main, A est de nouveau libre de vibrer, et le son de B lui revient. Quand on fait taire B, on entend ce que A a récupéré. L’énergie fait ainsi des allers-retours entre les deux diapasons, en s’affaiblissant peu à peu.</p>
+    <p>Le cavalier alourdit une branche : B vibre un peu plus lentement, environ 435 fois par seconde. Les poussées arrivent alors tantôt au bon moment, tantôt au mauvais. Elles se contrarient et rien ne passe d’un diapason à l’autre.</p>
+    <aside class="aside">
+      <h3>Le saviez-vous ?</h3>
+      <p>Un chanteur qui tient exactement la note propre d’un verre en cristal peut le faire vibrer, parfois jusqu’à le briser. C’est encore la résonance : de petites poussées, parfaitement en rythme.</p>
+    </aside>
+  </div>
+  <nav class="next" aria-label="Suite">
+    <button type="button" data-go="eolienne">Expérience suivante : la petite éolienne <span>→</span></button>
+    <button type="button" class="home" data-go="">Retour aux six expériences</button>
+  </nav>
+</section>
+
+<!-- ===================== 2. ÉOLIENNE ===================== -->
+<section class="view exp" data-view="eolienne" id="view-eolienne" hidden>
+  <button type="button" class="back" data-go="">← Toutes les expériences</button>
+  <p class="eyebrow">Expérience 2</p>
+  <h1>La petite éolienne</h1>
+  <p class="stand"><b>Sur le stand :</b> une soufflerie, réglable avec un bouton, souffle sur une petite éolienne à trois pales. Les fils de l’éolienne sont branchés sur une petite ampoule de 1,5 V.</p>
+  <div class="stage"><canvas id="cv-eolienne" role="img" aria-label="Une soufflerie souffle sur l’éolienne, reliée à une petite ampoule. En médaillon, le générateur caché dans la nacelle."></canvas></div>
+  <div class="controls">
+    <div class="field">
+      <label for="eo-wind">Réglage de la soufflerie : <output id="eo-wind-out" for="eo-wind">80 %</output></label>
+      <input type="range" id="eo-wind" min="0" max="100" step="1" value="80">
+    </div>
+    <button class="btn" id="eo-off" type="button">Arrêter la soufflerie</button>
+    <button class="btn" id="eo-max" type="button">Soufflerie à fond</button>
+    <button class="btn" id="eo-plug" type="button" aria-pressed="false">Débrancher l’ampoule</button>
+  </div>
+  <p class="status" id="st-eolienne" aria-live="polite"></p>
+  <div class="readouts">
+    <div class="ro"><span>Rotation du rotor</span><b id="ro-eorps">0 tour/min</b></div>
+    <div class="ro"><span>Tension aux bornes</span><b id="ro-eou">0,00 V</b></div>
+    <div class="ro"><span>Courant dans l’ampoule</span><b id="ro-eoi">0 mA</b></div>
+    <div class="ro"><span>Ampoule</span><b id="ro-eoled">éteinte</b></div>
+  </div>
+  <div class="chain" aria-label="Chaîne d’énergie">
+    <span class="st" id="ch-1">Vent</span><span class="ar" aria-hidden="true">→</span>
+    <span class="st" id="ch-2">Rotation</span><span class="ar" aria-hidden="true">→</span>
+    <span class="st" id="ch-3">Électricité</span><span class="ar" aria-hidden="true">→</span>
+    <span class="st" id="ch-4">Chaleur et lumière</span>
+  </div>
+  <div class="text">
+    <h2>Ce que l’on observe</h2>
+    <p>Avec peu de vent, le rotor tourne mais l’ampoule reste éteinte. En tournant le bouton de la soufflerie, le filament se met à rougeoyer, puis l’ampoule brille. Si l’on débranche l’ampoule, le rotor accélère un peu.</p>
+    <h2>Pourquoi ?</h2>
+    <p>Les pales sont inclinées par rapport au vent. L’air qui les contourne passe plus vite sur une face que sur l’autre, et d’après la loi de Bernoulli, la pression est plus faible du côté où l’air va le plus vite. Chaque pale est donc poussée de ce côté, et le rotor tourne. C’est ce que l’on sent avec une main tendue par la fenêtre d’une voiture : en l’inclinant, elle est poussée vers le haut. La feuille qu’on souffle (<button type="button" class="link-inline" data-go="feuille">expérience 6</button>) montre le même effet, avec un encadré sur l’effet Coandă pour aller plus loin.</p>
+    <p>Dans la nacelle blanche se cache un petit générateur : une bobine de fil de cuivre qui tourne entre deux aimants. C’est en fait un petit moteur électrique utilisé à l’envers : au lieu de recevoir du courant pour tourner, on le fait tourner et il produit du courant. C’est l’<strong>induction</strong>, découverte par Michael Faraday en 1831, le même principe que la dynamo d’un vélo.</p>
+    <p>Plus le rotor tourne vite, plus la tension est grande et plus le courant qui traverse l’ampoule est fort. Ce courant chauffe le fin filament : d’abord rouge sombre, puis orangé, puis presque blanc. Il faut environ 1,5 volt pour que l’ampoule brille normalement.</p>
+    <p>Quand l’ampoule est branchée, le rotor tourne un peu moins vite : l’énergie électrique qu’elle consomme est prise sur l’énergie de rotation. Le courant qui circule dans la bobine freine le rotor.</p>
+    <p>Le trajet de l’énergie : mouvement de l’air, rotation, électricité, puis surtout chaleur. Une ampoule à filament ne transforme qu’environ 5 % de l’énergie électrique en lumière.</p>
+    <aside class="aside">
+      <h3>Le saviez-vous ?</h3>
+      <p>Les éoliennes des Franches-Montagnes fonctionnent sur le même principe. À Saint-Brais, deux éoliennes de 2 mégawatts tournent depuis 2009 ; au Peuchapatte, trois éoliennes de 2,3 mégawatts depuis 2011. Toutes ont un rotor de 82 mètres de diamètre, et une seule d’entre elles peut allumer plus de vingt millions d’ampoules comme celle du stand. Quand le vent souffle deux fois plus fort, la puissance est multipliée par huit.</p>
+    </aside>
+  </div>
+  <nav class="next" aria-label="Suite">
+    <button type="button" data-go="cloche">Expérience suivante : la sonnette dans le vide <span>→</span></button>
+    <button type="button" class="home" data-go="">Retour aux six expériences</button>
+  </nav>
+</section>
+
+<!-- ===================== 3. CLOCHE À VIDE ===================== -->
+<section class="view exp" data-view="cloche" id="view-cloche" hidden>
+  <button type="button" class="back" data-go="">← Toutes les expériences</button>
+  <p class="eyebrow">Expérience 3</p>
+  <h1>La sonnette dans le vide</h1>
+  <p class="stand"><b>Sur le stand :</b> une sonnette électrique est placée sous une cloche en verre. Une pompe aspire l’air de la cloche, et un laser la traverse.</p>
+  <div class="stage"><canvas id="cv-cloche" role="img" aria-label="Une sonnette sous une cloche en verre reliée à une pompe. Les points sont les molécules d’air, les arcs bleus le son, le trait rouge le laser."></canvas></div>
+  <div class="controls">
+    <button class="btn primary" id="cl-pump" type="button" aria-pressed="false">Pomper l’air</button>
+    <button class="btn" id="cl-vent" type="button">Laisser rentrer l’air</button>
+    <button class="btn" id="cl-bell" type="button" aria-pressed="false">Arrêter la sonnette</button>
+  </div>
+  <p class="status" id="st-cloche" aria-live="polite"></p>
+  <div class="readouts">
+    <div class="ro"><span>Pression dans la cloche</span><b id="ro-clp">1013 hPa</b></div>
+    <div class="ro"><span>Son de la sonnette</span><b id="ro-cldb">70 dB</b></div>
+    <div class="ro"><span>Point du laser</span><b id="ro-cllas">100 %</b></div>
+  </div>
+  <div class="text">
+    <h2>Ce que l’on observe</h2>
+    <p>Plus on pompe, moins on entend la sonnette, alors qu’on voit toujours son marteau taper. Le point du laser, lui, ne change pas. Quand on laisse rentrer l’air, le son revient.</p>
+    <h2>Pourquoi ?</h2>
+    <p>Le son est une vibration de la matière. Le marteau pousse les molécules d’air voisines, qui poussent leurs voisines, et ainsi de suite jusqu’à notre oreille. Moins il reste de molécules, plus cette transmission est faible. Sans air, le son ne passe plus.</p>
+    <p>La lumière est une <strong>onde électromagnétique</strong> : elle n’a besoin d’aucune matière pour avancer. C’est ainsi que la lumière du Soleil nous parvient à travers 150 millions de kilomètres de vide.</p>
+    <p>Si l’on entend encore un tout petit peu la sonnette, c’est que la pompe ne fait jamais un vide parfait et que les vibrations passent aussi par le support et les fils.</p>
+    <aside class="aside">
+      <h3>Le saviez-vous ?</h3>
+      <p>Dans l’espace, les explosions des films de science-fiction seraient parfaitement silencieuses. Les astronautes en sortie se parlent par radio, une onde électromagnétique comme la lumière.</p>
+    </aside>
+  </div>
+  <div class="part">
+    <p class="eyebrow">Au même stand</p>
+    <h2 class="part-title">La bouteille et la pompe à vin</h2>
+    <p class="stand"><b>Sur le stand :</b> une bouteille à moitié remplie d’eau froide est fermée par un bouchon à valve. Avec une pompe à vin, on aspire l’air de la bouteille : de petites bulles apparaissent dans l’eau.</p>
+    <div class="stage"><canvas id="cv-bouteille" role="img" aria-label="Une bouteille d’eau fermée par une pompe à vin. Les points sont les molécules d’air et de vapeur au-dessus de l’eau ; à droite, la température d’ébullition selon la pression."></canvas></div>
+    <div class="controls">
+      <button class="btn primary" id="bo-pump" type="button">Coup de pompe</button>
+      <button class="btn" id="bo-vent" type="button">Laisser rentrer l’air</button>
+      <div class="seg" role="group" aria-label="Eau dans la bouteille">
+        <button class="btn" id="bo-cold" type="button" aria-pressed="true">Eau froide (20 °C)</button>
+        <button class="btn" id="bo-hot" type="button" aria-pressed="false">Eau chaude (80 °C)</button>
+      </div>
+    </div>
+    <p class="status" id="st-bouteille" aria-live="polite"></p>
+    <div class="readouts">
+      <div class="ro"><span>Pression dans la bouteille</span><b id="ro-bop">961 hPa</b></div>
+      <div class="ro"><span>L’eau bouillirait à</span><b id="ro-boteb">98,5 °C</b></div>
+      <div class="ro"><span>Température de l’eau</span><b id="ro-botw">20 °C</b></div>
+      <div class="ro"><span>Bulles</span><b id="ro-bobub">aucune</b></div>
+    </div>
+    <div class="text">
+      <h2>Ce que l’on observe</h2>
+      <p>À chaque coup de pompe, de petites bulles se forment sur les parois et montent. Elles se calment peu à peu, puis repartent au coup de pompe suivant. Quand on laisse rentrer l’air, elles disparaissent.</p>
+      <h2>Pourquoi ?</h2>
+      <p>L’eau du robinet contient de l’air dissous, invisible. La quantité d’air qu’elle peut garder dépend de la pression au-dessus d’elle (c’est la loi de Henry). En pompant, on baisse cette pression : l’eau contient alors trop d’air, et le surplus s’échappe en petites bulles. C’est ce qui se passe quand on ouvre une bouteille d’eau gazeuse.</p>
+      <p>Baisser la pression abaisse aussi la température d’ébullition. À Delémont (435 m), l’eau bout à 98,5 °C. Dans la bouteille, quand la pompe fait « clic » (environ 300 hPa, un tiers de la pression de l’air), elle bouillirait déjà vers 69 °C. Une bulle de vapeur ne peut grandir que si la vapeur pousse plus fort que ce qui appuie sur l’eau : moins de pression au-dessus, et une eau moins chaude suffit.</p>
+      <p>Mais l’eau du stand est à 20 °C : elle ne bout pas. Pour la faire bouillir à 20 °C, il faudrait descendre à 23 hPa, ce qu’une pompe à vin ne peut pas faire. Les petites bulles sont donc de l’air, pas de la vapeur. Avec de l’eau chaude à 80 °C, en revanche, la pompe suffit : essayez-le dans l’animation.</p>
+      <aside class="aside">
+        <h3>Le saviez-vous ?</h3>
+        <p>Au sommet de l’Everest, l’eau bout vers 70 °C : impossible d’y cuire correctement des pâtes. L’autocuiseur fait l’inverse : il augmente la pression pour que l’eau bouille vers 117 °C, et les aliments cuisent plus vite.</p>
+      </aside>
+    </div>
+  </div>
+  <nav class="next" aria-label="Suite">
+    <button type="button" data-go="chute">Expérience suivante : la chute des objets <span>→</span></button>
+    <button type="button" class="home" data-go="">Retour aux six expériences</button>
+  </nav>
+</section>
+
+<!-- ===================== 4. CHUTE LIBRE ===================== -->
+<section class="view exp" data-view="chute" id="view-chute" hidden>
+  <button type="button" class="back" data-go="">← Toutes les expériences</button>
+  <p class="eyebrow">Expérience 4</p>
+  <h1>La chute des objets</h1>
+  <p class="stand"><b>Sur le stand :</b> une bille d’acier est retenue par un électroaimant, 1 m au-dessus d’une plaque de contact. Quand on coupe le courant de l’aimant, la bille tombe et le chronomètre démarre ; il s’arrête dès que la bille frappe la plaque. On recommence avec une bille plus grosse.</p>
+  <div class="stage"><canvas id="cv-chute" role="img" aria-label="Une bille tenue par un électroaimant au-dessus d’une plaque de contact, tous deux reliés à un chronomètre, à côté d’une règle graduée."></canvas></div>
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Bille">
+      <button class="btn" type="button" id="ch-small" aria-pressed="true">Petite bille (17 g)</button>
+      <button class="btn" type="button" id="ch-big" aria-pressed="false">Grosse bille (135 g)</button>
+    </div>
+    <button class="btn primary" type="button" id="ch-go">Lâcher</button>
+    <button class="btn" type="button" id="ch-slow" aria-pressed="true">Ralenti ×4</button>
+  </div>
+  <p class="status" id="st-chute" aria-live="polite"></p>
+  <div class="readouts">
+    <div class="ro"><span>Temps mesuré</span><b id="ro-cht">0,000 s</b></div>
+    <div class="ro"><span>Vitesse à l’arrivée</span><b id="ro-chv">?</b></div>
+    <div class="ro"><span>Distance parcourue</span><b id="ro-chs">98,4 cm</b></div>
+  </div>
+  <div class="mes-wrap">
+    <table class="mes">
+      <caption>Vos mesures</caption>
+      <thead><tr><th scope="col">Essai</th><th scope="col">Bille</th><th scope="col">Masse</th><th scope="col">Temps</th></tr></thead>
+      <tbody id="ch-rows"><tr><td colspan="4" class="empty">Aucune mesure pour l’instant.</td></tr></tbody>
+    </table>
+    <button class="btn small" type="button" id="ch-clear">Effacer les mesures</button>
+  </div>
+  <div class="text">
+    <h2>Ce que l’on observe</h2>
+    <p>La grosse bille est huit fois plus lourde que la petite, et pourtant le chronomètre affiche presque le même temps : environ 0,45 seconde pour 1 mètre.</p>
+    <p>Les quelques millièmes de seconde d’écart ne viennent pas de la masse. La grosse bille, plus large, a son bas un peu plus près de la plaque au départ (1,6 cm de moins à parcourir), et l’aimant ne lâche jamais la bille exactement au même instant.</p>
+    <h2>Pourquoi ?</h2>
+    <p>On pourrait croire que l’objet lourd tombe plus vite, puisque la Terre l’attire plus fort. C’est vrai, son poids est plus grand. Mais il est aussi plus difficile à mettre en mouvement. Les deux effets se compensent exactement : sans air, tous les objets tombent de la même façon et gagnent 9,81 m/s de vitesse à chaque seconde.</p>
+    <p>L’air freine un tout petit peu les billes, mais sur 1 mètre l’effet reste inférieur au millième de seconde : le chronomètre ne le voit pas. Avec une plume ou une feuille de papier, ce serait une tout autre histoire : pour un objet très léger et étendu, la résistance de l’air devient vite aussi grande que le poids.</p>
+    <aside class="aside">
+      <h3>Le saviez-vous ?</h3>
+      <p>En 1971, l’astronaute David Scott a lâché un marteau et une plume sur la Lune, où il n’y a pas d’air. Ils ont touché le sol en même temps, comme Galilée l’avait prévu plus de trois siècles plus tôt.</p>
+    </aside>
+  </div>
+  <nav class="next" aria-label="Suite">
+    <button type="button" data-go="balle">Expérience suivante : la balle et le sèche-cheveux <span>→</span></button>
+    <button type="button" class="home" data-go="">Retour aux six expériences</button>
+  </nav>
+</section>
+
+<!-- ===================== 5. BALLE ET SÈCHE-CHEVEUX ===================== -->
+<section class="view exp" data-view="balle" id="view-balle" hidden>
+  <button type="button" class="back" data-go="">← Toutes les expériences</button>
+  <p class="eyebrow">Expérience 5</p>
+  <h1>La balle et le sèche-cheveux</h1>
+  <p class="stand"><b>Sur le stand :</b> un sèche-cheveux souffle vers le haut et une balle de ping-pong flotte dans le jet. On peut incliner le sèche-cheveux sans que la balle s’échappe.</p>
+  <div class="stage"><canvas id="cv-balle" role="img" aria-label="Un sèche-cheveux souffle un jet d’air dans lequel flotte une balle de ping-pong, avec les forces qui agissent sur la balle."></canvas></div>
+  <div class="controls">
+    <div class="field">
+      <label for="ba-tilt">Inclinaison du sèche-cheveux : <output id="ba-tilt-out" for="ba-tilt">0°</output></label>
+      <input type="range" id="ba-tilt" min="0" max="60" step="1" value="0">
+    </div>
+    <button class="btn primary" id="ba-nudge" type="button">Pichenette</button>
+    <button class="btn" id="ba-reset" type="button">Remettre la balle</button>
+    <button class="btn" id="ba-forces" type="button" aria-pressed="true">Montrer les forces</button>
+    <button class="btn" id="ba-on" type="button" aria-pressed="false">Arrêter le sèche-cheveux</button>
+  </div>
+  <p class="status" id="st-balle" aria-live="polite"></p>
+  <div class="readouts">
+    <div class="ro"><span>Hauteur au-dessus de la buse</span><b id="ro-bas">23 cm</b></div>
+    <div class="ro"><span>Position dans le jet</span><b id="ro-bar">au centre</b></div>
+  </div>
+  <div class="text">
+    <h2>Ce que l’on observe</h2>
+    <p>La balle danse un peu mais reste dans le jet. Quand on incline le sèche-cheveux, elle se place légèrement sous le centre du jet. Si l’on penche trop, elle finit par tomber.</p>
+    <h2>Pourquoi ?</h2>
+    <p><strong>Verticalement :</strong> l’air qui frappe la balle la pousse vers le haut. Elle s’arrête là où cette poussée égale son poids (la balle pèse 2,7 grammes). Plus haut, le jet s’élargit et ralentit : la balle redescend. Plus bas, le jet est plus fort : elle remonte.</p>
+    <p><strong>Sur les côtés :</strong> supposons que la balle s’écarte un peu vers la droite. Son côté gauche reste dans le centre du jet, où l’air est rapide ; son côté droit arrive au bord du jet, où l’air est plus lent.</p>
+    <p>En contournant la balle, l’air accélère, et d’après la loi de Bernoulli, là où l’air va plus vite, sa pression est plus faible. Cette baisse de pression est plus forte sur le côté gauche, où l’air arrive le plus vite. La balle est donc moins poussée à gauche qu’à droite : elle revient vers la gauche, c’est-à-dire vers le centre du jet. Cela marche de la même façon si elle s’écarte vers la gauche. Dans l’animation, cette force est la flèche rose « rappel ».</p>
+    <p><strong>Incliné :</strong> le poids ne tire plus dans l’axe du jet ; il tire aussi la balle sur le côté, vers le bas du jet. La balle s’écarte donc un peu du centre, de ce côté-là, juste assez pour que la force de rappel compense ce poids de côté. Si l’on penche trop, cette force ne suffit plus et la balle tombe.</p>
+    <aside class="aside">
+      <h3>Pour aller plus loin : l’effet Coandă</h3>
+      <p>Pourquoi l’air accélère-t-il en contournant la balle ? Parce qu’il ne continue pas tout droit : il reste collé à la balle et suit sa surface arrondie. C’est l’effet Coandă : un courant d’air a tendance à suivre une surface courbe. Pour qu’un courant d’air tourne, la pression doit être plus faible du côté intérieur du virage, ici contre la balle.</p>
+      <p>On peut aussi le dire avec action et réaction. L’air rapide qui monte le long du côté gauche de la balle suit sa surface par-dessus et repart vers la droite. Pour faire tourner ce courant d’air vers la droite, la balle doit le tirer vers la droite ; en retour, il tire la balle vers la gauche, vers le centre du jet.</p>
+      <p>Attention à un raccourci fréquent : « l’air du jet va vite, donc sa pression est plus basse que celle de l’air autour ». C’est faux : le jet sort du sèche-cheveux à la pression de la pièce. La pression ne baisse que là où l’air contourne la balle.</p>
+    </aside>
+    <aside class="aside">
+      <h3>À essayer chez vous</h3>
+      <p>Tenez une cuillère par le manche et approchez son dos arrondi d’un mince filet d’eau du robinet : la cuillère est attirée vers le filet. L’eau suit la surface courbe et, en retour, tire la cuillère. C’est le même effet que pour la balle.</p>
+    </aside>
+  </div>
+  <nav class="next" aria-label="Suite">
+    <button type="button" data-go="feuille">Expérience suivante : la feuille qui se soulève <span>→</span></button>
+    <button type="button" class="home" data-go="">Retour aux six expériences</button>
+  </nav>
+</section>
+<!-- ===================== 6. FEUILLE ===================== -->
+<section class="view exp" data-view="feuille" id="view-feuille" hidden>
+  <button type="button" class="back" data-go="">← Toutes les expériences</button>
+  <p class="eyebrow">Expérience 6</p>
+  <h1>La feuille qui se soulève</h1>
+  <p class="stand"><b>Sur le stand :</b> on tient une bande de papier juste sous la lèvre inférieure. Elle pend. On souffle par-dessus : elle se soulève, presque jusqu’à l’horizontale.</p>
+  <div class="stage"><canvas id="cv-feuille" role="img" aria-label="Une personne souffle au-dessus d’une bande de papier tenue sous sa lèvre. L’air suit le dessus courbe de la bande et repart vers le bas."></canvas></div>
+  <div class="controls">
+    <button class="btn primary" id="fe-blow" type="button" aria-pressed="false">Souffler</button>
+    <div class="field">
+      <label for="fe-force">Force du souffle : <output id="fe-force-out" for="fe-force">70 %</output></label>
+      <input type="range" id="fe-force" min="10" max="100" step="1" value="70">
+    </div>
+  </div>
+  <p class="status" id="st-feuille" aria-live="polite"></p>
+  <div class="readouts">
+    <div class="ro"><span>Bout de la bande</span><b id="ro-fetip">78° sous l’horizontale</b></div>
+    <div class="ro"><span>Air au bout de la bande</span><b id="ro-feair">immobile</b></div>
+  </div>
+  <div class="text">
+    <h2>Ce que l’on observe</h2>
+    <p>Plus on souffle fort, plus la bande remonte. Dès qu’on arrête, elle retombe.</p>
+    <h2>Pourquoi ?</h2>
+    <p>Quand on souffle, l’air sort de la bouche à l’horizontale, à la pression de la pièce, et passe juste au-dessus de la bande. Il reste collé à la face supérieure de la bande et suit sa courbe vers le bas.</p>
+    <p>En suivant cette courbe, l’air accélère contre la bande, et d’après la loi de Bernoulli, là où l’air va plus vite, sa pression est plus faible. Au-dessus de la bande, la pression devient donc plus faible que sous la bande, où l’air immobile garde la pression de la pièce. L’air du dessous pousse plus fort que l’air du dessus : la bande monte. Dans l’animation, la zone bleue montre la pression plus faible et les flèches jaunes la poussée vers le haut.</p>
+    <p>En remontant, la bande se courbe moins : la pression au-dessus baisse moins, et la force qui soulève la bande diminue. La bande s’arrête là où cette force équilibre son poids.</p>
+    <p>C’est le même principe qui fait tourner l’éolienne (expérience 2) et voler les avions : l’air qui contourne une pale ou une aile passe plus vite sur une face que sur l’autre ; la pression y est plus faible, et la pale ou l’aile est poussée de ce côté.</p>
+    <aside class="aside">
+      <h3>Pour aller plus loin : l’effet Coandă</h3>
+      <p>Pourquoi l’air accélère-t-il contre la bande ? Parce qu’il suit sa courbe au lieu de continuer tout droit. C’est l’effet Coandă : un courant d’air a tendance à suivre une surface courbe. Pour qu’un courant d’air tourne, la pression doit être plus faible du côté intérieur du virage, ici contre la bande.</p>
+      <p>On peut aussi le dire avec action et réaction : pour faire tourner le courant d’air vers le bas, la bande doit le tirer vers le bas ; en retour, il tire la bande vers le haut. Les pales de l’éolienne et les ailes d’avion dévient l’air de la même façon.</p>
+      <p>Attention à un raccourci fréquent : « l’air soufflé va vite, donc sa pression est basse ». C’est faux : à la sortie de la bouche, l’air est à la pression de la pièce. La pression ne baisse que là où l’air longe la surface courbe de la bande.</p>
+    </aside>
+  </div>
+  <nav class="next" aria-label="Suite">
+    <button type="button" data-go="eolienne">Revoir l’éolienne, qui tourne grâce au même principe <span>→</span></button>
+    <button type="button" class="home" data-go="">Retour aux six expériences</button>
+  </nav>
+</section>
+</main>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const TAU = Math.PI * 2;
+const COL = {
+  chalk: '#ece8dc', dim: 'rgba(236,232,220,.6)', faint: 'rgba(236,232,220,.22)',
+  yellow: '#f3d36b', pink: '#f39ab0', blue: '#8ec8ea', red: '#ff5a4f',
+  wood: '#c8995f', steel: '#c9d1d6', board: '#283832', copper: '#d68b4c'
+};
+const FONT = '"Atkinson Hyperlegible", system-ui, sans-serif';
+const HAND = '"Caveat Brush", cursive';
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const fr = (x, d) => (Math.abs(x) < 0.5 * Math.pow(10, -d) ? 0 : x).toFixed(d).replace('.', ',');
+// Typographie française : espace insécable avant : ; ? ! et à l'intérieur des guillemets
+const nb = (s) => s.replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ');
+function setText(el, s) { s = nb(s); if (el && el.textContent !== s) el.textContent = s; }
+(function fixTypo(node) {
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (/^(SCRIPT|STYLE)$/.test(n.parentNode.nodeName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+  let n; while ((n = w.nextNode())) { const t = nb(n.nodeValue); if (t !== n.nodeValue) n.nodeValue = t; }
+})();
+
+/* ---------- Scène : un canevas à coordonnées logiques, net sur tous les écrans ---------- */
+function makeStage(canvas, W, H) {
+  const ctx = canvas.getContext('2d');
+  const st = { canvas, ctx, W, H, k: 1 };
+  canvas.style.aspectRatio = W + ' / ' + H;
+  canvas.style.setProperty('--ar', String(W / H));
+  st.resize = () => {
+    const w = canvas.clientWidth || W;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(w * H / W * dpr);
+    st.k = canvas.width / W;
+  };
+  st.begin = () => { ctx.setTransform(st.k, 0, 0, st.k, 0, 0); ctx.clearRect(0, 0, W, H); };
+  return st;
+}
+function pen(ctx, color, w) { ctx.strokeStyle = color; ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; }
+function txt(ctx, s, x, y, o = {}) {
+  ctx.font = (o.bold ? '700 ' : '') + (o.size || 12) + 'px ' + (o.hand ? HAND : FONT);
+  ctx.fillStyle = o.color || COL.dim; ctx.textAlign = o.align || 'center'; ctx.textBaseline = o.base || 'middle';
+  ctx.fillText(s, x, y);
+}
+function arrow(ctx, x1, y1, x2, y2, color, w = 2.6) {
+  const L = Math.hypot(x2 - x1, y2 - y1); if (L < 3) return;
+  const ux = (x2 - x1) / L, uy = (y2 - y1) / L, hs = Math.min(8, L * 0.45);
+  pen(ctx, color, w);
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - ux * hs * 0.6, y2 - uy * hs * 0.6); ctx.stroke();
+  ctx.fillStyle = color; ctx.beginPath();
+  ctx.moveTo(x2, y2); ctx.lineTo(x2 - ux * hs - uy * hs * 0.55, y2 - uy * hs + ux * hs * 0.55);
+  ctx.lineTo(x2 - ux * hs + uy * hs * 0.55, y2 - uy * hs - ux * hs * 0.55); ctx.closePath(); ctx.fill();
+}
+function rrect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+
+/* ---------- Son (coupé au départ, activé par le bouton) ---------- */
+const Snd = {
+  ctx: null, master: null, noise: null, on: false,
+  ensure() {
+    if (this.ctx) return true;
+    const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return false;
+    try { this.ctx = new AC(); } catch (e) { return false; }
+    this.master = this.ctx.createGain(); this.master.gain.value = 0.45; this.master.connect(this.ctx.destination);
+    const len = this.ctx.sampleRate * 2, buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate), d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    this.noise = buf; return true;
+  },
+  set(param, v, tc = 0.04) { if (this.ctx) param.setTargetAtTime(v, this.ctx.currentTime, tc); },
+  osc(type, f) { const o = this.ctx.createOscillator(); o.type = type; o.frequency.value = f; o.start(); return o; },
+  gain(v = 0) { const g = this.ctx.createGain(); g.gain.value = v; return g; },
+  noiseSrc() { const s = this.ctx.createBufferSource(); s.buffer = this.noise; s.loop = true; s.start(); return s; },
+  filter(type, f, q = 0.7) { const b = this.ctx.createBiquadFilter(); b.type = type; b.frequency.value = f; b.Q.value = q; return b; }
+};
+const soundBtn = $('#soundBtn'), soundLbl = $('#soundLbl'), soundWaves = $('#soundWaves');
+soundBtn.addEventListener('click', async () => {
+  if (!Snd.on) {
+    if (!Snd.ensure()) { setText(soundLbl, 'Son indisponible'); return; }
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+    try { await Snd.ctx.resume(); } catch (e) {}
+    Snd.on = true;
+  } else Snd.on = false;
+  soundBtn.setAttribute('aria-pressed', String(Snd.on));
+  setText(soundLbl, Snd.on ? 'Son activé' : 'Son coupé');
+  soundWaves.setAttribute('d', Snd.on ? 'M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12' : 'M17 9l4 6M21 9l-4 6');
+});
+
+const sims = {};
+
+/* =====================================================================
+   1. DIAPASONS : deux oscillateurs couplés par le son (enveloppes complexes)
+   dA/dt = -γA·A + iκ·B ;  dB/dt = (-γB + iδ)·B + iκ·A
+   γ = 1/12 s (+ 20 s⁻¹ pendant que la main touche), κ = 0,28 s⁻¹,
+   δ = 2π·(fB − 440 Hz) : avec le cavalier, δ ≈ -31 s⁻¹ et rien ne passe
+   ===================================================================== */
+sims.diapason = (() => {
+  const st = makeStage($('#cv-diapason'), 360, 250), ctx = st.ctx;
+  const el = { status: $('#st-diapason'), a: $('#ro-dpa'), b: $('#ro-dpb'), fb: $('#ro-dpfb'), cav: $('#dp-cav') };
+  const TAUD = 12, KAP = 0.28, VIS = 7, TOUCH = 0.5;
+  const S = { y: [0, 0, 0, 0], cav: false, hA: 0, hB: 0, mallet: 9, t: 0, waves: [], eA: 0, eB: 0, last: 'none', aAtB: 0 };
+  const fB = () => (S.cav ? 435 : 440);
+  const ampA = () => Math.hypot(S.y[0], S.y[1]), ampB = () => Math.hypot(S.y[2], S.y[3]);
+  $('#dp-strike').addEventListener('click', () => { S.y[0] = 1; S.y[1] = 0; S.mallet = 0; S.hA = 0; S.last = 'strike'; });
+  $('#dp-handA').addEventListener('click', () => { S.hA = TOUCH; S.last = 'handA'; });
+  $('#dp-handB').addEventListener('click', () => { S.hB = TOUCH; S.last = 'handB'; S.aAtB = ampA(); });
+  $('#dp-reset').addEventListener('click', () => { S.y = [0, 0, 0, 0]; S.hA = 0; S.hB = 0; S.last = 'none'; S.waves.length = 0; });
+  el.cav.addEventListener('click', () => {
+    S.cav = !S.cav; el.cav.setAttribute('aria-pressed', String(S.cav));
+    setText(el.cav, S.cav ? 'Retirer le cavalier' : 'Mettre le cavalier sur B');
+  });
+  function deriv(y, gA, gB, dB) {
+    return [-gA * y[0] - KAP * y[3], -gA * y[1] + KAP * y[2],
+      -gB * y[2] - dB * y[3] - KAP * y[1], -gB * y[3] + dB * y[2] + KAP * y[0]];
+  }
+  function step(dt) {
+    S.t += dt; S.mallet += dt;
+    const n = Math.max(1, Math.ceil(dt / 0.002)), h = dt / n, dB = TAU * (fB() - 440);
+    for (let i = 0; i < n; i++) {
+      const gA = 1 / TAUD + (S.hA > 0 ? 20 : 0), gB = 1 / TAUD + (S.hB > 0 ? 20 : 0);
+      S.hA = Math.max(0, S.hA - h); S.hB = Math.max(0, S.hB - h);
+      const y = S.y, k1 = deriv(y, gA, gB, dB);
+      const k2 = deriv(y.map((v, j) => v + h / 2 * k1[j]), gA, gB, dB);
+      const k3 = deriv(y.map((v, j) => v + h / 2 * k2[j]), gA, gB, dB);
+      const k4 = deriv(y.map((v, j) => v + h * k3[j]), gA, gB, dB);
+      S.y = y.map((v, j) => v + h / 6 * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]));
+    }
+    const a = ampA(), b = ampB();
+    S.eA += dt; S.eB += dt;
+    while (S.eA >= 1 / VIS) { S.eA -= 1 / VIS; if (a > 0.02) S.waves.push({ x: 150, dir: 1, r: 0, amp: a }); }
+    while (S.eB >= 1 / VIS) { S.eB -= 1 / VIS; if (b > 0.02) S.waves.push({ x: 210, dir: -1, r: 0, amp: b }); }
+    for (const w of S.waves) w.r += 72 * dt;
+    S.waves = S.waves.filter((w) => w.r < 150);
+  }
+  function box(x, opening) {
+    pen(ctx, COL.wood, 2.4); ctx.strokeRect(x, 150, 120, 55);
+    ctx.fillStyle = 'rgba(0,0,0,.35)';
+    ctx.fillRect(opening > 0 ? x + 108 : x + 2, 160, 10, 36);
+    pen(ctx, 'rgba(200,153,95,.5)', 1.2);
+    for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(x + 14, 150 + i * 13); ctx.lineTo(x + 106, 150 + i * 13 + (i % 2 ? 2 : -2)); ctx.stroke(); }
+  }
+  function fork(cx, amp, phase, cav) {
+    const d = amp * 7 * Math.sin(phase);
+    pen(ctx, COL.steel, 3.2);
+    ctx.beginPath(); ctx.moveTo(cx, 150); ctx.lineTo(cx, 136); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - 8, 118); ctx.quadraticCurveTo(cx - 8, 136, cx, 136); ctx.quadraticCurveTo(cx + 8, 136, cx + 8, 118); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - 8, 118); ctx.quadraticCurveTo(cx - 8, 84, cx - 8 - d, 50); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx + 8, 118); ctx.quadraticCurveTo(cx + 8, 84, cx + 8 + d, 50); ctx.stroke();
+    if (cav) {
+      const f = Math.pow((118 - 74) / 68, 2), x = cx + 8 + d * f;
+      ctx.fillStyle = COL.pink; rrect(ctx, x - 6, 68, 12, 12, 2); ctx.fill();
+      txt(ctx, 'cavalier', x + 10, 74, { align: 'left', color: COL.pink, size: 12 });
+    }
+  }
+  function hand(cx) {
+    ctx.fillStyle = 'rgba(236,232,220,.18)'; pen(ctx, COL.chalk, 2);
+    rrect(ctx, cx - 20, 60, 40, 44, 12); ctx.fill(); ctx.stroke();
+    txt(ctx, 'main', cx, 50, { hand: true, size: 18, color: COL.chalk });
+  }
+  function draw() {
+    st.begin();
+    const a = ampA(), b = ampB(), ph = TAU * VIS * S.t;
+    txt(ctx, 'vibrations très ralenties à l’écran', 8, 14, { align: 'left', size: 11 });
+    for (const w of S.waves) {
+      const al = w.amp * (1 - w.r / 150) * 0.9; if (al < 0.02) continue;
+      pen(ctx, `rgba(142,200,234,${al.toFixed(3)})`, 2);
+      ctx.beginPath();
+      if (w.dir > 0) ctx.arc(w.x, 178, w.r, -0.7, 0.7); else ctx.arc(w.x, 178, w.r, Math.PI - 0.7, Math.PI + 0.7);
+      ctx.stroke();
+    }
+    pen(ctx, COL.chalk, 2); ctx.beginPath(); ctx.moveTo(8, 206); ctx.lineTo(352, 206); ctx.stroke();
+    box(30, 1); box(210, -1);
+    fork(90, a, ph, false); fork(270, b, ph + 0.8, S.cav);
+    txt(ctx, 'A', 60, 178, { hand: true, size: 26, color: COL.chalk });
+    txt(ctx, 'B', 300, 178, { hand: true, size: 26, color: COL.chalk });
+    txt(ctx, '440 Hz', 100, 178, { size: 12 });
+    txt(ctx, fB() + ' Hz', 258, 178, { size: 12, color: S.cav ? COL.pink : COL.dim });
+    if (S.mallet < 0.45) {
+      const p = S.mallet / 0.45, k = p < 0.3 ? (0.3 - p) / 0.3 : (p - 0.3) / 0.7;
+      const hx = 73 - 34 * k, hy = 58 - 8 * k;
+      pen(ctx, COL.wood, 3); ctx.beginPath(); ctx.moveTo(hx - 4, hy + 4); ctx.lineTo(hx - 40, hy + 26); ctx.stroke();
+      ctx.fillStyle = COL.pink; rrect(ctx, hx - 8, hy - 6, 14, 12, 4); ctx.fill();
+    }
+    if (S.hA > 0) hand(90);
+    if (S.hB > 0) hand(270);
+    const bar = (x, v, c, lab) => {
+      ctx.fillStyle = COL.faint; rrect(ctx, x, 222, 120, 8, 4); ctx.fill();
+      ctx.fillStyle = c; rrect(ctx, x, 222, Math.max(0, 120 * clamp(v, 0, 1)), 8, 4); ctx.fill();
+      txt(ctx, lab, x, 240, { align: 'left', size: 11 });
+    };
+    bar(30, a, COL.yellow, 'vibration de A'); bar(210, b, COL.blue, 'vibration de B');
+  }
+  function message() {
+    const a = ampA(), b = ampB();
+    if (S.last === 'none') return 'Appuyez sur « Frapper A », puis regardez B.';
+    if (a < 0.03 && b < 0.03 && S.last !== 'handA' && S.last !== 'handB') return 'Les deux diapasons se sont tus. Frappez A pour recommencer.';
+    if (S.cav) {
+      if (S.last === 'strike') return 'A vibre et envoie son son vers B, mais B, désaccordé par le cavalier, bouge à peine.';
+      return 'Avec le cavalier, rien ne passe d’un diapason à l’autre. Retirez-le pour comparer.';
+    }
+    if (S.last === 'strike') return b < 0.25 ? 'A vibre et envoie son son vers B. Regardez B : il se met à vibrer à son tour.' : 'B vibre maintenant aussi. Posez la main sur A pour le faire taire.';
+    if (S.last === 'handA') {
+      if (b < 0.05) return 'Tout est silencieux : B n’a pas eu le temps de démarrer. Frappez A et attendez quelques secondes.';
+      if (a < 0.2) return 'A est muet, mais B chante tout seul : il a capté le son de A. Attendez trois secondes, puis posez la main sur B.';
+      return 'Pendant que B chante, A capte à son tour le son de B et se remet à vibrer. Posez maintenant la main sur B.';
+    }
+    if (S.aAtB < 0.08) return 'Presque rien : A n’avait pas encore eu le temps de capter le son de B. Recommencez en attendant un peu avant de toucher B.';
+    return 'B est muet, et A chante à nouveau : cette fois, c’est A qui a capté le son de B. L’énergie fait des allers-retours.';
+  }
+  let nodes = null;
+  function audio(on) {
+    if (on && !nodes && Snd.ctx) {
+      nodes = { oa: Snd.osc('sine', 440), ob: Snd.osc('sine', 440), ga: Snd.gain(), gb: Snd.gain() };
+      nodes.oa.connect(nodes.ga); nodes.ob.connect(nodes.gb); nodes.ga.connect(Snd.master); nodes.gb.connect(Snd.master);
+    }
+    if (!nodes) return;
+    nodes.ob.frequency.setTargetAtTime(fB(), Snd.ctx.currentTime, 0.02);
+    Snd.set(nodes.ga.gain, on ? 0.22 * ampA() : 0, 0.03);
+    Snd.set(nodes.gb.gain, on ? 0.22 * ampB() : 0, 0.03);
+  }
+  function ui() {
+    setText(el.a, fr(ampA() * 100, 0) + ' %');
+    setText(el.b, fr(ampB() * 100, 0) + ' %');
+    setText(el.fb, fB() + ' Hz' + (S.cav ? ' (cavalier)' : ''));
+    setText(el.status, message());
+  }
+  return { stage: st, step, draw, audio, ui };
+})();
+
+/* =====================================================================
+   2. ÉOLIENNE (soufflerie, rotor à 3 pales, générateur dans la nacelle,
+   ampoule 1,5 V / 60 mA). Générateur : f.é.m. E = 0,0925 V par tour/s,
+   résistance interne 12 Ω ; ampoule ≈ 25 Ω à chaud. Ampoule branchée :
+   le rotor tourne 20 % moins vite (le courant le freine).
+   ===================================================================== */
+sims.eolienne = (() => {
+  const st = makeStage($('#cv-eolienne'), 360, 290), ctx = st.ctx;
+  const el = { status: $('#st-eolienne'), rps: $('#ro-eorps'), u: $('#ro-eou'), i: $('#ro-eoi'), led: $('#ro-eoled'), out: $('#eo-wind-out'), plug: $('#eo-plug'),
+    ch: [$('#ch-1'), $('#ch-2'), $('#ch-3'), $('#ch-4')] };
+  const slider = $('#eo-wind');
+  const K0 = 0.12, RPSMAX = 30, KE = 0.0925, RI = 12, RB = 25, BRAKE = 0.8, VIS = 0.12;
+  const S = { k: slider.value / 100, plug: true, rps: 0, ang: 0, fan: 0, dots: 0, parts: [] };
+  const base = () => (S.k > K0 ? RPSMAX * (S.k - K0) / (1 - K0) : 0);
+  S.rps = base() * BRAKE;
+  for (let i = 0; i < 40; i++) S.parts.push({ x: 118 + Math.random() * 70, y: 0, o: Math.random() * 2 - 1, k: Math.random() });
+  const setK = (v) => { S.k = v; slider.value = Math.round(v * 100); };
+  slider.addEventListener('input', () => { S.k = slider.value / 100; });
+  $('#eo-off').addEventListener('click', () => setK(0));
+  $('#eo-max').addEventListener('click', () => setK(1));
+  el.plug.addEventListener('click', () => {
+    S.plug = !S.plug; el.plug.setAttribute('aria-pressed', String(!S.plug));
+    setText(el.plug, S.plug ? 'Débrancher l’ampoule' : 'Rebrancher l’ampoule');
+  });
+  const E = () => KE * S.rps;
+  const I = () => (S.plug ? E() / (RI + RB) : 0);
+  const U = () => (S.plug ? I() * RB : E());
+  const glow = () => (S.plug ? clamp((U() - 0.45) / 1.05, 0, 1.15) : 0);
+  function step(dt) {
+    const target = base() * (S.plug ? BRAKE : 1);
+    S.rps += (target - S.rps) * (1 - Math.exp(-dt / (target > S.rps ? 1.0 : 1.8)));
+    if (S.rps < 0.05 && target === 0) S.rps = 0;
+    S.ang += TAU * S.rps * VIS * dt;
+    S.fan += TAU * 3 * S.k * dt;
+    S.dots += I() * 2200 * dt;
+    const sp = 40 + 240 * S.k;
+    for (const p of S.parts) { p.x += sp * (0.8 + 0.4 * p.k) * dt; if (p.x > 186) { p.x = 118 + Math.random() * 8; p.o = Math.random() * 2 - 1; } }
+  }
+  const CAB = [[[263, 233], [286, 236], [292, 262], [304, 252]], [[275, 233], [300, 228], [334, 270], [342, 252]]];
+  const bez = (c, t) => { const u = 1 - t; return [0, 1].map((j) => u * u * u * c[0][j] + 3 * u * u * t * c[1][j] + 3 * u * t * t * c[2][j] + t * t * t * c[3][j]); };
+  function draw() {
+    st.begin();
+    txt(ctx, 'rotation ralentie à l’écran', 8, 14, { align: 'left', size: 11 });
+    const GROUND = 262;
+    pen(ctx, COL.chalk, 2); ctx.beginPath(); ctx.moveTo(4, GROUND); ctx.lineTo(356, GROUND); ctx.stroke();
+    // --- soufflerie : volute noire, grille d'aspiration, buse vers l'éolienne, socle avec bouton
+    ctx.fillStyle = '#e4e0d4'; rrect(ctx, 8, 214, 98, 48, 4); ctx.fill();
+    ctx.fillStyle = '#111'; ctx.beginPath(); ctx.arc(22, 240, 7, 0, TAU); ctx.fill();
+    const ka = Math.PI * (0.75 + 1.5 * S.k);
+    pen(ctx, '#fff', 1.6); ctx.beginPath(); ctx.moveTo(22, 240); ctx.lineTo(22 + 6 * Math.cos(ka), 240 + 6 * Math.sin(ka)); ctx.stroke();
+    txt(ctx, 'réglage', 34, 240, { align: 'left', size: 9, color: '#3a4642' });
+    ctx.fillStyle = '#151a19';
+    ctx.beginPath(); ctx.arc(56, 172, 40, 0, TAU); ctx.fill();
+    ctx.fillRect(56, 116, 62, 36);
+    ctx.fillStyle = '#2c3431'; ctx.beginPath(); ctx.ellipse(118, 134, 4, 18, 0, 0, TAU); ctx.fill();
+    pen(ctx, 'rgba(236,232,220,.35)', 1.2);
+    ctx.save(); ctx.translate(56, 172); ctx.rotate(S.fan);
+    for (let i = 0; i < 7; i++) { const a = i * TAU / 7; ctx.beginPath(); ctx.moveTo(Math.cos(a) * 8, Math.sin(a) * 8); ctx.lineTo(Math.cos(a + 0.5) * 24, Math.sin(a + 0.5) * 24); ctx.stroke(); }
+    ctx.restore();
+    pen(ctx, 'rgba(236,232,220,.7)', 1.3);
+    for (const r of [12, 20, 28]) { ctx.beginPath(); ctx.arc(56, 172, r, 0, TAU); ctx.stroke(); }
+    txt(ctx, 'soufflerie', 56, 278, { size: 12 });
+    // --- vent
+    const nAct = Math.round(S.parts.length * S.k);
+    pen(ctx, 'rgba(142,200,234,.6)', 1.6);
+    for (let i = 0; i < nAct; i++) {
+      const p = S.parts[i], spread = 14 + (p.x - 118) * 0.25, y = 134 + p.o * spread, L = 6 + 18 * S.k;
+      ctx.beginPath(); ctx.moveTo(p.x, y); ctx.lineTo(p.x - L, y); ctx.stroke();
+    }
+    // --- éolienne : socle à bornes, mât, nacelle, rotor de trois quarts
+    ctx.fillStyle = '#e4e0d4'; rrect(ctx, 178, 222, 104, 40, 4); ctx.fill();
+    txt(ctx, 'générateur', 256, 233, { align: 'right', size: 10, color: '#3a4642' });
+    for (const [x, y, c] of [[263, 233, '#d9473f'], [275, 233, '#3f6fc4']]) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, 3.6, 0, TAU); ctx.fill(); }
+    ctx.fillStyle = '#ecebe6'; ctx.fillRect(222, 142, 11, 82);
+    rrect(ctx, 194, 121, 70, 26, 12); ctx.fill();
+    const cx = 190, cy = 134, sx = 0.42, L = 44;
+    if (S.rps * VIS > 2) { ctx.fillStyle = 'rgba(236,232,220,.07)'; ctx.beginPath(); ctx.ellipse(cx, cy, sx * L, L, 0, 0, TAU); ctx.fill(); }
+    for (let i = 0; i < 3; i++) {
+      const a = S.ang + i * TAU / 3, ca = Math.cos(a), sa = Math.sin(a);
+      const P = (u, v) => [cx + sx * (u * ca - v * sa), cy + (u * sa + v * ca)];
+      ctx.beginPath(); ctx.moveTo(...P(6, -3)); ctx.lineTo(...P(14, -6.5)); ctx.lineTo(...P(L - 4, -6.5));
+      ctx.quadraticCurveTo(...P(L + 1, -6.5), ...P(L + 1, 0)); ctx.quadraticCurveTo(...P(L + 1, 6.5), ...P(L - 4, 6.5));
+      ctx.lineTo(...P(14, 6.5)); ctx.lineTo(...P(6, 3)); ctx.closePath();
+      ctx.fillStyle = '#121515'; ctx.fill(); pen(ctx, 'rgba(236,232,220,.55)', 1); ctx.stroke();
+    }
+    ctx.fillStyle = '#ecebe6'; rrect(ctx, cx - 6, cy - 9, 12, 18, 4); ctx.fill();
+    txt(ctx, 'éolienne', 228, 278, { size: 12 });
+    // --- médaillon : le générateur dans la nacelle
+    const gx = 318, gy = 46, gr = 34;
+    pen(ctx, 'rgba(236,232,220,.4)', 1.2); ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(250, 122); ctx.lineTo(gx - gr * 0.75, gy + gr * 0.7); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#20302a'; ctx.beginPath(); ctx.arc(gx, gy, gr, 0, TAU); ctx.fill(); pen(ctx, COL.chalk, 1.8); ctx.stroke();
+    ctx.fillStyle = '#e0574f'; ctx.beginPath(); ctx.arc(gx, gy, 27, Math.PI * 0.72, Math.PI * 1.28); ctx.arc(gx, gy, 19, Math.PI * 1.28, Math.PI * 0.72, true); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#5d8fd6'; ctx.beginPath(); ctx.arc(gx, gy, 27, -Math.PI * 0.28, Math.PI * 0.28); ctx.arc(gx, gy, 19, Math.PI * 0.28, -Math.PI * 0.28, true); ctx.closePath(); ctx.fill();
+    txt(ctx, 'N', gx - 23, gy, { size: 9, bold: true, color: '#fff' }); txt(ctx, 'S', gx + 23, gy, { size: 9, bold: true, color: '#fff' });
+    ctx.save(); ctx.translate(gx, gy); ctx.rotate(S.ang);
+    ctx.fillStyle = COL.copper; rrect(ctx, -16, -5, 32, 10, 3); ctx.fill();
+    pen(ctx, 'rgba(60,30,10,.7)', 1); for (let k = -12; k <= 12; k += 4) { ctx.beginPath(); ctx.moveTo(k, -5); ctx.lineTo(k + 1.5, 5); ctx.stroke(); }
+    ctx.restore();
+    ctx.fillStyle = COL.chalk; ctx.beginPath(); ctx.arc(gx, gy, 2.2, 0, TAU); ctx.fill();
+    txt(ctx, 'une bobine tourne', 354, 92, { align: 'right', size: 11 });
+    txt(ctx, 'entre deux aimants', 354, 104, { align: 'right', size: 11 });
+    // --- boîtier de charge avec l'ampoule
+    ctx.fillStyle = '#e4e0d4'; rrect(ctx, 292, 186, 62, 76, 5); ctx.fill();
+    txt(ctx, '1,5 V · 60 mA', 323, 236, { size: 9, color: '#3a4642' });
+    for (const [x, c] of [[306, '#d9473f'], [342, '#3f6fc4']]) { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, 252, 3.8, 0, TAU); ctx.fill(); }
+    const gl = glow();
+    if (gl > 0.02) {
+      const R = 10 + 40 * Math.min(gl, 1), gg = ctx.createRadialGradient(323, 208, 2, 323, 208, R);
+      gg.addColorStop(0, `rgba(255,${Math.round(150 + 90 * Math.min(gl, 1))},${Math.round(60 + 140 * Math.min(gl, 1))},${(0.9 * Math.min(gl, 1)).toFixed(3)})`);
+      gg.addColorStop(1, 'rgba(255,140,60,0)');
+      ctx.fillStyle = gg; ctx.beginPath(); ctx.arc(323, 208, R, 0, TAU); ctx.fill();
+    }
+    ctx.fillStyle = '#9aa3a6'; ctx.fillRect(317, 216, 12, 10);
+    ctx.fillStyle = gl > 0.02 ? `rgba(255,${Math.round(170 + 80 * Math.min(gl, 1))},${Math.round(110 + 130 * Math.min(gl, 1))},${(0.35 + 0.6 * Math.min(gl, 1)).toFixed(3)})` : 'rgba(220,230,235,.35)';
+    ctx.beginPath(); ctx.arc(323, 207, 10, 0, TAU); ctx.fill();
+    pen(ctx, gl > 0.02 ? `rgb(255,${Math.round(90 + 150 * Math.min(gl, 1))},${Math.round(40 + 160 * Math.min(gl, 1))})` : '#555', 1.4);
+    ctx.beginPath(); ctx.moveTo(319, 216); ctx.lineTo(320, 206); ctx.lineTo(322, 209); ctx.lineTo(324, 205); ctx.lineTo(326, 209); ctx.lineTo(327, 216); ctx.stroke();
+    txt(ctx, 'ampoule', 323, 278, { size: 12 });
+    // --- câbles rouge et bleu, courant
+    CAB.forEach((c, j) => {
+      const cc = S.plug ? c : [c[0], c[1], [282 + 4 * j, 270], [284 + 5 * j, 257]];
+      pen(ctx, j ? '#5d8fd6' : '#e0574f', 2.2);
+      ctx.beginPath(); ctx.moveTo(...cc[0]); ctx.bezierCurveTo(...cc[1], ...cc[2], ...cc[3]); ctx.stroke();
+      if (S.plug && I() > 0.003 && j === 0) {
+        ctx.fillStyle = COL.yellow;
+        for (let k = 0; k < 6; k++) { const q = bez(c, ((S.dots / 60 + k / 6) % 1)); ctx.beginPath(); ctx.arc(q[0], q[1], 2, 0, TAU); ctx.fill(); }
+      }
+    });
+    if (!S.plug) txt(ctx, 'débranchée', 323, 176, { size: 11, color: COL.pink });
+  }
+  function ui() {
+    setText(el.out, Math.round(S.k * 100) + ' %');
+    const rpm = S.rps * 60;
+    setText(el.rps, (rpm < 1 ? '0' : String(Math.round(rpm / 10) * 10)) + ' tours/min');
+    setText(el.u, fr(U(), 2) + ' V');
+    setText(el.i, S.plug ? fr(I() * 1000, 0) + ' mA' : '0 mA');
+    const gl = glow();
+    setText(el.led, !S.plug ? 'débranchée' : gl <= 0 ? 'éteinte' : gl < 0.5 ? 'rougeoie' : 'brille');
+    const on = [S.k > 0.02, S.rps > 0.3, S.plug && I() > 0.003, gl > 0];
+    on.forEach((v, i) => el.ch[i].classList.toggle('on', v));
+    let m;
+    if (S.k <= K0) m = S.k < 0.02 ? 'La soufflerie est arrêtée : rien ne tourne.' : 'Trop peu de vent : les frottements empêchent le rotor de démarrer.';
+    else if (!S.plug) m = 'L’ampoule est débranchée : le rotor tourne plus vite, car il n’a plus d’énergie électrique à fournir. Rebranchez-la et regardez-le ralentir.';
+    else if (gl <= 0) m = 'Le rotor tourne, mais trop lentement : la tension est trop faible pour faire chauffer le filament.';
+    else if (gl < 0.5) m = 'Le filament rougeoie : il chauffe, mais pas encore assez pour bien éclairer. Montez le réglage.';
+    else m = 'L’ampoule brille : le courant chauffe son filament à plus de 2000 °C.';
+    setText(el.status, m);
+  }
+  let nodes = null;
+  function audio(on) {
+    if (on && !nodes && Snd.ctx) {
+      nodes = { src: Snd.noiseSrc(), f: Snd.filter('bandpass', 600, 0.6), g: Snd.gain() };
+      nodes.src.connect(nodes.f); nodes.f.connect(nodes.g); nodes.g.connect(Snd.master);
+    }
+    if (nodes) Snd.set(nodes.g.gain, on ? 0.35 * S.k * S.k : 0, 0.1);
+  }
+  return { stage: st, step, draw, audio, ui };
+})();
+
+/* =====================================================================
+   3. CLOCHE À VIDE : niveau par l'air 70 dB + 20·log(p / 1013 hPa),
+   plancher du support 30 dB, pompe (accélérée) vers 1 hPa
+   ===================================================================== */
+sims.cloche = (() => {
+  const st = makeStage($('#cv-cloche'), 360, 290), ctx = st.ctx;
+  const el = { status: $('#st-cloche'), p: $('#ro-clp'), db: $('#ro-cldb'), las: $('#ro-cllas'), pump: $('#cl-pump'), bell: $('#cl-bell') };
+  const P0 = 1013, PLIM = 1, NMOL = 150;
+  const J = { cx: 170, base: 250, top: 168, rx: 78, ry: 80, left: 92, right: 248 };
+  const S = { p: P0, pump: false, vent: false, bell: true, t: 0, mol: [], waves: [], emit: 0, flow: 0 };
+  function inJar(x, y) {
+    if (y > J.base - 5 || x < J.left + 5 || x > J.right - 5) return false;
+    if (y >= J.top) return true;
+    const dx = (x - J.cx) / (J.rx - 5), dy = (y - J.top) / (J.ry - 5); return dx * dx + dy * dy < 1;
+  }
+  function spawn(m) {
+    let x, y; do { x = J.left + Math.random() * (J.right - J.left); y = J.top - J.ry + Math.random() * (J.base - J.top + J.ry); } while (!inJar(x, y) || (Math.abs(x - 170) < 26 && y > 200));
+    const a = Math.random() * TAU, v = 22 + Math.random() * 34; Object.assign(m, { x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v });
+  }
+  for (let i = 0; i < NMOL; i++) { const m = {}; spawn(m); S.mol.push(m); }
+  el.pump.addEventListener('click', () => {
+    S.pump = !S.pump; if (S.pump) S.vent = false;
+    el.pump.setAttribute('aria-pressed', String(S.pump)); setText(el.pump, S.pump ? 'Arrêter la pompe' : 'Pomper l’air');
+  });
+  $('#cl-vent').addEventListener('click', () => {
+    S.vent = true; S.pump = false; el.pump.setAttribute('aria-pressed', 'false'); setText(el.pump, 'Pomper l’air');
+  });
+  el.bell.addEventListener('click', () => {
+    S.bell = !S.bell; el.bell.setAttribute('aria-pressed', String(!S.bell));
+    setText(el.bell, S.bell ? 'Arrêter la sonnette' : 'Remettre la sonnette');
+  });
+  const Lair = () => 70 + 20 * Math.log10(Math.max(S.p, 1e-3) / P0);
+  const Ltot = () => 10 * Math.log10(Math.pow(10, Lair() / 10) + Math.pow(10, 30 / 10));
+  function step(dt) {
+    S.t += dt;
+    if (S.pump) { S.p += (PLIM - S.p) * (1 - Math.exp(-dt / 3.5)); S.flow += dt; }
+    if (S.vent) { S.p += (P0 - S.p) * (1 - Math.exp(-dt / 1.2)); if (P0 - S.p < 0.5) { S.p = P0; S.vent = false; } }
+    for (const m of S.mol) {
+      const nx = m.x + m.vx * dt, ny = m.y + m.vy * dt;
+      if (inJar(nx, ny)) { m.x = nx; m.y = ny; }
+      else { const a = Math.random() * TAU, v = Math.hypot(m.vx, m.vy); m.vx = Math.cos(a) * v; m.vy = Math.sin(a) * v; if (!inJar(m.x, m.y)) spawn(m); }
+    }
+    S.emit += dt;
+    while (S.emit > 0.14) { S.emit -= 0.14; if (S.bell) S.waves.push({ r: 22 }); }
+    for (const w of S.waves) w.r += 85 * dt;
+    S.waves = S.waves.filter((w) => w.r < 200);
+  }
+  function draw() {
+    st.begin();
+    const amp = S.p / P0;
+    if (S.pump || S.vent) txt(ctx, S.pump ? 'pompage accéléré à l’écran' : 'l’air rentre', 8, 14, { align: 'left', size: 11 });
+    // son
+    for (const w of S.waves) {
+      const al = amp * (1 - w.r / 200) * 0.85; if (al < 0.015) continue;
+      pen(ctx, `rgba(142,200,234,${al.toFixed(3)})`, 2);
+      ctx.beginPath(); ctx.arc(170, 214, w.r, Math.PI * 1.02, Math.PI * 1.98); ctx.stroke();
+    }
+    // molécules d'air
+    const nShow = Math.round(NMOL * S.p / P0);
+    ctx.fillStyle = 'rgba(142,200,234,.85)';
+    for (let i = 0; i < nShow; i++) { const m = S.mol[i]; ctx.beginPath(); ctx.arc(m.x, m.y, 1.9, 0, TAU); ctx.fill(); }
+    // socle
+    ctx.fillStyle = 'rgba(236,232,220,.55)'; ctx.fillRect(66, 250, 210, 8);
+    // fils vers la pile
+    pen(ctx, 'rgba(236,232,220,.5)', 1.4);
+    ctx.beginPath(); ctx.moveTo(156, 236); ctx.lineTo(156, 262); ctx.lineTo(40, 262); ctx.lineTo(40, 272); ctx.stroke();
+    ctx.fillStyle = COL.chalk; rrect(ctx, 24, 270, 32, 14, 3); ctx.fill(); txt(ctx, 'pile', 64, 277, { align: 'left', size: 11 });
+    // mousse, support et timbre de la sonnette
+    ctx.fillStyle = 'rgba(243,154,176,.45)'; rrect(ctx, 140, 242, 60, 8, 3); ctx.fill();
+    ctx.fillStyle = '#7a8a84'; ctx.fillRect(150, 228, 40, 14);
+    ctx.fillStyle = COL.yellow; ctx.beginPath(); ctx.arc(170, 228, 19, Math.PI, 0); ctx.closePath(); ctx.fill();
+    const hit = S.bell ? Math.abs(Math.sin(TAU * 7 * S.t)) : 0;
+    const hx = 195 + 5 * hit;
+    pen(ctx, COL.steel, 2.4); ctx.beginPath(); ctx.moveTo(190, 240); ctx.lineTo(hx, 216); ctx.stroke();
+    ctx.fillStyle = COL.steel; ctx.beginPath(); ctx.arc(hx, 214, 4.5, 0, TAU); ctx.fill();
+    // cloche en verre
+    pen(ctx, 'rgba(236,232,220,.85)', 2.6);
+    ctx.beginPath(); ctx.moveTo(J.left, J.base); ctx.lineTo(J.left, J.top);
+    ctx.ellipse(J.cx, J.top, J.rx, J.ry, 0, Math.PI, 0); ctx.lineTo(J.right, J.base); ctx.stroke();
+    pen(ctx, 'rgba(236,232,220,.25)', 4); ctx.beginPath(); ctx.ellipse(J.cx, J.top, J.rx - 10, J.ry - 10, 0, Math.PI * 1.15, Math.PI * 1.4); ctx.stroke();
+    ctx.fillStyle = COL.chalk; ctx.beginPath(); ctx.arc(J.cx, J.top - J.ry - 5, 6, 0, TAU); ctx.fill();
+    // laser, faisceau et écran
+    ctx.fillStyle = '#4b5753'; rrect(ctx, 6, 147, 46, 14, 3); ctx.fill(); txt(ctx, 'laser', 29, 138, { size: 11 });
+    ctx.save(); ctx.shadowColor = COL.red; ctx.shadowBlur = 6;
+    pen(ctx, 'rgba(255,90,79,.9)', 1.8); ctx.beginPath(); ctx.moveTo(52, 154); ctx.lineTo(334, 154); ctx.stroke(); ctx.restore();
+    pen(ctx, COL.dim, 4); ctx.beginPath(); ctx.moveTo(340, 112); ctx.lineTo(340, 196); ctx.stroke();
+    const g = ctx.createRadialGradient(337, 154, 1, 337, 154, 13); g.addColorStop(0, 'rgba(255,120,110,1)'); g.addColorStop(1, 'rgba(255,90,79,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(337, 154, 13, 0, TAU); ctx.fill();
+    txt(ctx, 'écran', 340, 104, { size: 11 });
+    // pompe, tuyau et manomètre
+    pen(ctx, 'rgba(236,232,220,.6)', 3); ctx.beginPath(); ctx.moveTo(262, 256); ctx.quadraticCurveTo(282, 284, 296, 272); ctx.stroke();
+    ctx.fillStyle = '#4b5753'; rrect(ctx, 290, 252, 60, 30, 5); ctx.fill(); txt(ctx, 'pompe', 320, 267, { size: 11, color: COL.chalk });
+    if (S.pump && S.p > 2) {
+      ctx.fillStyle = 'rgba(142,200,234,.8)';
+      for (let k = 0; k < 3; k++) { const f = ((S.flow * 1.6 + k / 3) % 1); ctx.beginPath(); ctx.arc(262 + 34 * f, 256 + 22 * Math.sin(f * Math.PI) + 4 * f, 1.8, 0, TAU); ctx.fill(); }
+    }
+    const mx = 320, my = 226, mr = 17;
+    ctx.fillStyle = '#20302a'; ctx.beginPath(); ctx.arc(mx, my, mr, 0, TAU); ctx.fill(); pen(ctx, COL.chalk, 1.6); ctx.stroke();
+    pen(ctx, COL.dim, 1.2);
+    for (let k = 0; k <= 4; k++) { const a = 0.75 * Math.PI + k / 4 * 1.5 * Math.PI; ctx.beginPath(); ctx.moveTo(mx + Math.cos(a) * 13, my + Math.sin(a) * 13); ctx.lineTo(mx + Math.cos(a) * 16, my + Math.sin(a) * 16); ctx.stroke(); }
+    const na = 0.75 * Math.PI + (S.p / P0) * 1.5 * Math.PI;
+    arrow(ctx, mx, my, mx + Math.cos(na) * 13, my + Math.sin(na) * 13, COL.yellow, 1.8);
+    txt(ctx, 'hPa', mx, my + 9, { size: 8 });
+    txt(ctx, 'manomètre', mx, my - 26, { size: 11 });
+  }
+  function ui() {
+    setText(el.p, (S.p >= 99.5 ? fr(S.p, 0) : S.p >= 9.95 ? fr(S.p, 0) : fr(S.p, 1)) + ' hPa');
+    setText(el.db, S.bell ? fr(Ltot(), 0) + ' dB' : 'silence');
+    setText(el.las, '100 %');
+    let m;
+    if (!S.bell) m = 'La sonnette est arrêtée. Remettez-la pour comparer avec et sans air.';
+    else if (S.p > 500) m = 'La sonnette s’entend bien : les molécules d’air transmettent le son jusqu’à nous.';
+    else if (S.p > 30) m = 'Moins d’air, moins de son : on l’entend de plus en plus faiblement.';
+    else m = 'On voit le marteau taper, mais on n’entend presque plus rien. Le laser, lui, passe toujours.';
+    setText(el.status, m);
+  }
+  let nodes = null;
+  function audio(on) {
+    if (on && !nodes && Snd.ctx) {
+      const mix = Snd.gain(1), am = Snd.gain(0.5), out = Snd.gain(), lfo = Snd.osc('square', 14), depth = Snd.gain(0.5);
+      for (const [f, a] of [[1650, 0.35], [2480, 0.25], [3950, 0.12]]) { const o = Snd.osc('sine', f), gg = Snd.gain(a); o.connect(gg); gg.connect(mix); }
+      lfo.connect(depth); depth.connect(am.gain); mix.connect(am); am.connect(out); out.connect(Snd.master);
+      nodes = { out };
+    }
+    if (nodes) Snd.set(nodes.out.gain, on && S.bell ? 0.16 * Math.pow(10, (Ltot() - 70) / 20) : 0, 0.05);
+  }
+  return { stage: st, step, draw, audio, ui };
+})();
+
+/* =====================================================================
+   3 bis. LA BOUTEILLE ET LA POMPE À VIN (même page que la cloche)
+   Pression de vapeur saturante : Antoine (eau, 1 à 100 °C).
+   Pompe : chaque coup multiplie la pression par 0,86 ; « clic » vers 300 hPa
+   (valeur typique, non publiée par le fabricant). Pression ambiante 961 hPa
+   (Delémont, 435 m : ébullition à 98,5 °C).
+   Air dissous (loi de Henry) : saturation ∝ pression partielle de l'air ;
+   l'excès s'échappe en petites bulles (constante 18 s).
+   Vapeur : tend vers p_sat(T) en 0,8 s ; ébullition si p_air + p_vap < p_sat(T).
+   ===================================================================== */
+sims.bouteille = (() => {
+  const st = makeStage($('#cv-bouteille'), 360, 330), ctx = st.ctx;
+  const el = { status: $('#st-bouteille'), pump: $('#bo-pump'), vent: $('#bo-vent'), cold: $('#bo-cold'), hot: $('#bo-hot'),
+    p: $('#ro-bop'), teb: $('#ro-boteb'), tw: $('#ro-botw'), bub: $('#ro-bobub') };
+  const P0 = 961, PCLICK = 300, K = 0.86, BX = 104, WY = 232, NMOL = 100;
+  const psat = (T) => Math.pow(10, 8.07131 - 1730.63 / (233.426 + T)) / 0.750062;
+  const teb = (p) => 1730.63 / (8.07131 - Math.log10(Math.max(p, 6.2) * 0.750062)) - 233.426;
+  const S = { hot: false, T: 20, pa: 0, pv: 0, pa0: 0, C: 1, queue: 0, sT: 9, clicked: false, clickT: 9, venting: false,
+    mol: [], bub: [], airEmit: 0, vapEmit: 0, airRate: 0, boil: false, last: 'none', t: 0, splash: [] };
+  function reset(hot) {
+    S.hot = hot; S.T = hot ? 80 : 20; S.pv = psat(S.T); S.pa = P0 - S.pv; S.pa0 = S.pa; S.C = 1;
+    S.bub.length = 0; S.queue = 0; S.clicked = false; S.venting = false; S.last = 'none'; S.airRate = 0;
+    el.cold.setAttribute('aria-pressed', String(!hot)); el.hot.setAttribute('aria-pressed', String(hot));
+  }
+  const halfW = (y) => (y >= 150 ? 44 : y >= 112 ? 13 + 31 * (y - 112) / 38 : y >= 66 ? 12 : 0);
+  const inHead = (x, y) => y > 74 && y < WY - 3 && Math.abs(x - BX) < halfW(y) - 4;
+  function spawnMol(m) {
+    let x, y; do { x = BX - 42 + Math.random() * 84; y = 76 + Math.random() * (WY - 80); } while (!inHead(x, y));
+    const a = Math.random() * TAU, v = 20 + Math.random() * 30; Object.assign(m, { x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v });
+  }
+  for (let i = 0; i < NMOL; i++) { const m = {}; spawnMol(m); S.mol.push(m); }
+  reset(false);
+  el.pump.addEventListener('click', () => { if (S.queue < 6) S.queue += 1; S.venting = false; S.last = 'pump'; });
+  el.vent.addEventListener('click', () => { S.venting = true; S.queue = 0; S.clicked = false; S.last = 'vent'; });
+  el.cold.addEventListener('click', () => reset(false));
+  el.hot.addEventListener('click', () => reset(true));
+  function spawnAir() {
+    if (S.bub.length > 170) return;
+    const side = Math.random(); let x, y;
+    if (side < 0.38) { x = BX - 41; y = WY + 8 + Math.random() * 78; }
+    else if (side < 0.76) { x = BX + 41; y = WY + 8 + Math.random() * 78; }
+    else { x = BX - 36 + Math.random() * 72; y = 314; }
+    S.bub.push({ x, y, r: 0.7, rmax: 1.4 + Math.random() * 1.2, stick: 0.3 + Math.random() * 1.6, vy: 0, kind: 'air', ph: Math.random() * TAU });
+  }
+  function spawnVap() {
+    if (S.bub.length > 170) return;
+    S.bub.push({ x: BX - 30 + Math.random() * 60, y: 313, r: 1.5, rmax: 4 + Math.random() * 3.5, stick: 0.05, vy: 0, kind: 'vap', ph: Math.random() * TAU });
+  }
+  let strokeSnd = 0;
+  function step(dt) {
+    S.t += dt; S.clickT += dt;
+    // coups de pompe
+    if (S.sT < 0.45) {
+      const before = S.sT; S.sT += dt;
+      if (before < 0.2 && S.sT >= 0.2) {
+        const p = S.pa + S.pv;
+        if (p > PCLICK + 1) {
+          const s = Math.max(K, PCLICK / p); S.pa *= s; S.pv *= s; strokeSnd = 1;
+          if (S.pa + S.pv <= PCLICK + 2) { S.clicked = true; S.clickT = 0; }
+        } else { S.clicked = true; S.clickT = 0; }
+      }
+    } else if (S.queue > 0) { S.queue -= 1; S.sT = 0; }
+    // air qui rentre
+    if (S.venting) { S.pa += ((P0 - S.pv) - S.pa) * (1 - Math.exp(-dt / 0.3)); if (Math.abs(P0 - S.pv - S.pa) < 1) S.venting = false; }
+    // vapeur d'eau au-dessus de l'eau
+    const ps = psat(S.T), dpv = (ps - S.pv) * (1 - Math.exp(-dt / 0.8));
+    S.pv += dpv; if (dpv > 0) S.T -= 0.00034 * dpv;
+    S.boil = S.pa + S.pv < ps - 3;
+    // air dissous
+    const Csat = S.pa / S.pa0;
+    let emitted = 0;
+    if (S.C > Csat) { const d = (S.C - Csat) * (1 - Math.exp(-dt / 18)); S.C -= d; S.airEmit += d * 900; }
+    else S.C += (Csat - S.C) * (1 - Math.exp(-dt / 150));
+    while (S.airEmit >= 1) { S.airEmit -= 1; emitted += 1; spawnAir(); }
+    S.airRate += (emitted / Math.max(dt, 1e-3) - S.airRate) * (1 - Math.exp(-dt / 0.8));
+    if (S.boil) S.vapEmit += dt * 45;
+    while (S.vapEmit >= 1) { S.vapEmit -= 1; spawnVap(); }
+    // bulles
+    for (const b of S.bub) {
+      if (b.stick > 0) { b.stick -= dt; b.r = Math.min(b.rmax, b.r + dt * (b.kind === 'vap' ? 14 : 1.2)); continue; }
+      if (b.kind === 'vap') b.r = Math.min(b.rmax + 2, b.r + dt * 3);
+      b.vy = -(b.kind === 'vap' ? 70 + 6 * b.r : 16 + 9 * b.r);
+      b.y += b.vy * dt; b.x += Math.sin(S.t * 6 + b.ph) * 6 * dt;
+      if (b.kind === 'air' && b.x < BX - 41) b.x = BX - 41; if (b.kind === 'air' && b.x > BX + 41) b.x = BX + 41;
+      if (b.y < WY + b.r) { b.dead = true; if (b.kind === 'vap') S.splash.push({ x: b.x, age: 0, r: b.r }); }
+    }
+    S.bub = S.bub.filter((b) => !b.dead);
+    for (const s of S.splash) s.age += dt; S.splash = S.splash.filter((s) => s.age < 0.35);
+    // molécules au-dessus de l'eau
+    for (const m of S.mol) {
+      const nx = m.x + m.vx * dt, ny = m.y + m.vy * dt;
+      if (inHead(nx, ny)) { m.x = nx; m.y = ny; }
+      else { const a = Math.random() * TAU, v = Math.hypot(m.vx, m.vy); m.vx = Math.cos(a) * v; m.vy = Math.sin(a) * v; if (!inHead(m.x, m.y)) spawnMol(m); }
+    }
+  }
+  const GX0 = 202, GX1 = 348, GY0 = 300, GY1 = 162;
+  const gX = (p) => GX0 + clamp(p, 0, 1000) / 1000 * (GX1 - GX0), gY = (T) => GY0 - clamp(T, 0, 100) / 100 * (GY0 - GY1);
+  function bottlePath() {
+    ctx.beginPath(); ctx.moveTo(BX - 12, 66); ctx.lineTo(BX - 12, 112);
+    ctx.quadraticCurveTo(BX - 44, 124, BX - 44, 152); ctx.lineTo(BX - 44, 308); ctx.quadraticCurveTo(BX - 44, 318, BX - 34, 318);
+    ctx.lineTo(BX + 34, 318); ctx.quadraticCurveTo(BX + 44, 318, BX + 44, 308); ctx.lineTo(BX + 44, 152);
+    ctx.quadraticCurveTo(BX + 44, 124, BX + 12, 112); ctx.lineTo(BX + 12, 66);
+  }
+  function draw() {
+    st.begin();
+    const p = S.pa + S.pv, tb = teb(p);
+    // légende
+    ctx.fillStyle = '#cfd8dc'; ctx.beginPath(); ctx.arc(244, 16, 3, 0, TAU); ctx.fill(); txt(ctx, 'air', 252, 16, { align: 'left', size: 11 });
+    ctx.fillStyle = COL.blue; ctx.beginPath(); ctx.arc(278, 16, 3, 0, TAU); ctx.fill(); txt(ctx, 'vapeur d’eau', 286, 16, { align: 'left', size: 11 });
+    txt(ctx, 'molécules et bulles agrandies', 352, 32, { align: 'right', size: 10 });
+    // bouteille : verre et eau
+    ctx.save(); bottlePath(); ctx.closePath(); ctx.fillStyle = 'rgba(120,190,150,.07)'; ctx.fill(); ctx.clip();
+    ctx.fillStyle = 'rgba(90,150,210,.38)'; ctx.fillRect(BX - 46, WY, 92, 90);
+    ctx.restore();
+    pen(ctx, 'rgba(142,200,234,.8)', 1.5); ctx.beginPath(); ctx.moveTo(BX - 44, WY); ctx.lineTo(BX + 44, WY); ctx.stroke();
+    // molécules
+    const nA = Math.round(NMOL * S.pa / P0), nV = Math.min(NMOL - nA, Math.round(NMOL * S.pv / P0));
+    for (let i = 0; i < nA + nV; i++) { const m = S.mol[i]; ctx.fillStyle = i < nA ? '#cfd8dc' : COL.blue; ctx.beginPath(); ctx.arc(m.x, m.y, 1.8, 0, TAU); ctx.fill(); }
+    // bulles
+    for (const b of S.bub) {
+      if (b.kind === 'air') { pen(ctx, 'rgba(240,244,246,.9)', 1); ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, TAU); ctx.stroke(); }
+      else { ctx.fillStyle = 'rgba(200,230,250,.25)'; pen(ctx, 'rgba(200,230,250,.95)', 1.4); ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, TAU); ctx.fill(); ctx.stroke(); }
+    }
+    for (const s of S.splash) { pen(ctx, `rgba(200,230,250,${(1 - s.age / 0.35).toFixed(2)})`, 1.2); ctx.beginPath(); ctx.arc(s.x, WY - 1, s.r + s.age * 20, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); }
+    pen(ctx, 'rgba(236,232,220,.85)', 2.4); bottlePath(); ctx.stroke();
+    pen(ctx, 'rgba(236,232,220,.25)', 3); ctx.beginPath(); ctx.moveTo(BX - 36, 170); ctx.lineTo(BX - 36, 290); ctx.stroke();
+    // bouchon à valve et pompe à vin
+    ctx.fillStyle = '#7d8a86'; rrect(ctx, BX - 15, 58, 30, 14, 3); ctx.fill();
+    const lift = S.sT < 0.45 ? Math.sin(Math.PI * S.sT / 0.45) * 16 : 0;
+    ctx.fillStyle = '#16191a'; rrect(ctx, BX - 15, 24, 30, 36, 6); ctx.fill();
+    pen(ctx, '#9aa3a6', 3); ctx.beginPath(); ctx.moveTo(BX, 24); ctx.lineTo(BX, 14 - lift); ctx.stroke();
+    ctx.fillStyle = '#16191a'; rrect(ctx, BX - 30, 6 - lift, 60, 10, 5); ctx.fill();
+    pen(ctx, 'rgba(236,232,220,.55)', 1); rrect(ctx, BX - 30, 6 - lift, 60, 10, 5); ctx.stroke(); rrect(ctx, BX - 15, 24, 30, 36, 6); ctx.stroke();
+    txt(ctx, 'pompe à vin', BX + 20, 44, { align: 'left', size: 11 });
+    txt(ctx, 'bouchon à valve', BX + 20, 66, { align: 'left', size: 11 });
+    if (S.clickT < 1.3) txt(ctx, 'clic !', BX - 38, 30, { hand: true, size: 20, color: `rgba(243,211,107,${(1 - S.clickT / 1.3).toFixed(2)})`, align: 'right' });
+    // type de bulles
+    if (S.boil) txt(ctx, 'bulles de vapeur : l’eau bout', 352, 100, { align: 'right', size: 12, bold: true, color: COL.blue });
+    else if (S.airRate > 1.2) txt(ctx, 'bulles d’air dissous', 352, 100, { align: 'right', size: 12, bold: true, color: COL.chalk });
+    // graphique : température d'ébullition selon la pression
+    txt(ctx, 'température d’ébullition', GX0, 150, { align: 'left', size: 11, bold: true, color: COL.chalk });
+    pen(ctx, COL.faint, 1); ctx.strokeRect(GX0, GY1, GX1 - GX0, GY0 - GY1);
+    for (const [pp, lab] of [[0, '0'], [500, '500'], [1000, '1000']]) txt(ctx, lab, gX(pp), GY0 + 10, { size: 9 });
+    txt(ctx, 'pression (hPa)', (GX0 + GX1) / 2, GY0 + 22, { size: 10 });
+    for (const T of [0, 50, 100]) txt(ctx, T + ' °C', GX0 - 4, gY(T), { align: 'right', size: 9 });
+    pen(ctx, COL.chalk, 1.8); ctx.beginPath();
+    for (let pp = 6.2; pp <= 1000; pp *= 1.06) { const x = gX(pp), y = gY(teb(pp)); pp === 6.2 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+    ctx.lineTo(gX(1000), gY(teb(1000))); ctx.stroke();
+    pen(ctx, COL.yellow, 1.4); ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(GX0, gY(S.T)); ctx.lineTo(GX1, gY(S.T)); ctx.stroke(); ctx.setLineDash([]);
+    txt(ctx, 'eau : ' + fr(S.T, 0) + ' °C', GX0 + 4, gY(S.T) - 8, { align: 'left', size: 10, color: COL.yellow, bold: true });
+    ctx.fillStyle = COL.pink; ctx.beginPath(); ctx.arc(gX(p), gY(tb), 4.5, 0, TAU); ctx.fill();
+    txt(ctx, fr(tb, 0) + ' °C', gX(p) + (p > 700 ? -8 : 8), gY(tb) + 13, { align: p > 700 ? 'right' : 'left', size: 10, color: COL.pink, bold: true });
+  }
+  function ui() {
+    const p = S.pa + S.pv, tb = teb(p);
+    setText(el.p, fr(p, 0) + ' hPa');
+    setText(el.teb, fr(tb, 1) + ' °C');
+    setText(el.tw, fr(S.T, 1) + ' °C');
+    setText(el.bub, S.boil ? 'vapeur (ébullition)' : S.airRate > 0.8 ? 'air dissous' : 'aucune');
+    let m;
+    if (S.last === 'none') m = S.hot ? 'Eau chaude à 80 °C. Appuyez plusieurs fois sur « Coup de pompe » et suivez la température d’ébullition sur le graphique.' : 'La bouteille est à moitié remplie d’eau froide. Appuyez plusieurs fois sur « Coup de pompe ».';
+    else if (S.last === 'vent') m = 'L’air est rentré : la pression remonte, et l’eau ne bouillirait de nouveau qu’à 98,5 °C.';
+    else if (S.hot && S.boil) m = 'L’eau bout à ' + fr(S.T, 0) + ' °C : à cette pression, plus besoin d’atteindre 98,5 °C.';
+    else if (S.hot && tb > S.T + 0.5) m = 'À chaque coup de pompe, la température d’ébullition baisse (' + fr(tb, 0) + ' °C). Quand elle passe sous la température de l’eau, l’eau se met à bouillir.';
+    else if (S.hot) m = 'La vapeur remplit vite la bouteille, la pression remonte et l’ébullition s’arrête. Un nouveau coup de pompe la relance.';
+    else if (S.clicked) m = 'Clic : la pompe ne descend pas plus bas (environ 300 hPa). L’eau bouillirait maintenant vers ' + fr(tb, 0) + ' °C, mais elle n’est qu’à 20 °C : elle ne bout pas. Les bulles sont de l’air.';
+    else if (S.airRate > 1.2) m = 'De petites bulles apparaissent : c’est de l’air qui était dissous dans l’eau. Avec moins de pression au-dessus, l’eau ne peut plus en garder autant.';
+    else m = 'La température d’ébullition est descendue à ' + fr(tb, 0) + ' °C, encore bien au-dessus des 20 °C de l’eau. Continuez à pomper.';
+    setText(el.status, m);
+  }
+  let nodes = null;
+  function audio(on) {
+    if (on && !nodes && Snd.ctx) {
+      nodes = { src: Snd.noiseSrc(), hp: Snd.filter('highpass', 2500), g: Snd.gain(), src2: Snd.noiseSrc(), bp: Snd.filter('bandpass', 700, 1), g2: Snd.gain() };
+      nodes.src.connect(nodes.hp); nodes.hp.connect(nodes.g); nodes.g.connect(Snd.master);
+      nodes.src2.connect(nodes.bp); nodes.bp.connect(nodes.g2); nodes.g2.connect(Snd.master);
+    }
+    if (!nodes) return;
+    Snd.set(nodes.g.gain, on ? Math.min(0.12, S.airRate / 200) + (S.boil ? 0.08 : 0) : 0, 0.1);
+    Snd.set(nodes.g2.gain, on && strokeSnd > 0 ? 0.25 : on && S.boil ? 0.18 : 0, 0.04);
+    strokeSnd = Math.max(0, strokeSnd - 0.08);
+  }
+  return { stage: st, step, draw, audio, ui, view: 'cloche' };
+})();
+
+/* =====================================================================
+   4. CHUTE (électroaimant, plaque de contact, chronomètre ; 1 m entre l'aimant
+   et la plaque). Distance parcourue = 1 m − diamètre de la bille.
+   Air : y = vL²/g · ln cosh(g·t/vL) (vL : 54 m/s petite, 76 m/s grosse).
+   Lâcher de l'aimant : retard aléatoire de 1 à 3,5 ms.
+   ===================================================================== */
+sims.chute = (() => {
+  const st = makeStage($('#cv-chute'), 360, 400), ctx = st.ctx;
+  const el = { status: $('#st-chute'), go: $('#ch-go'), slow: $('#ch-slow'), small: $('#ch-small'), big: $('#ch-big'), clear: $('#ch-clear'),
+    t: $('#ro-cht'), v: $('#ro-chv'), s: $('#ro-chs'), rows: $('#ch-rows') };
+  const B = {
+    petite: { name: 'Petite bille', mass: '17 g', d: 0.016, vL: 54, heavy: false },
+    grosse: { name: 'Grosse bille', mass: '135 g', d: 0.032, vL: 76, heavy: true }
+  };
+  const g = 9.81, H = 1.0, YM = 80, PLATE = 352, BX = 214, ZOOM = 2.5, SC = (PLATE - YM) / H;
+  const S = { ball: 'petite', phase: 'hang', t: 0, delay: 0, T: 0, slow: true, rows: [], n: 0, last: {}, flash: 0, tocAge: 9 };
+  const logcosh = (x) => { x = Math.abs(x); return x + Math.log1p(Math.exp(-2 * x)) - Math.LN2; };
+  const dist = (b) => H - b.d;
+  const yOf = (b, t) => b.vL * b.vL / g * logcosh(g * t / b.vL);
+  const tFall = (b) => { const v = b.vL, X = g * dist(b) / (v * v); return v / g * (X + Math.log(1 + Math.sqrt(1 - Math.exp(-2 * X)))); };
+  const rDraw = (b) => b.d / 2 * SC * ZOOM;
+  function hang() { S.phase = 'hang'; S.t = 0; setText(el.go, 'Lâcher'); }
+  function choose(k) {
+    S.ball = k; hang();
+    el.small.setAttribute('aria-pressed', String(k === 'petite')); el.big.setAttribute('aria-pressed', String(k === 'grosse'));
+  }
+  el.small.addEventListener('click', () => choose('petite'));
+  el.big.addEventListener('click', () => choose('grosse'));
+  el.go.addEventListener('click', () => {
+    if (S.phase !== 'hang') { hang(); return; }
+    S.phase = 'fall'; S.t = 0; S.delay = 0.001 + Math.random() * 0.0025; S.T = S.delay + tFall(B[S.ball]);
+    setText(el.go, 'Raccrocher la bille');
+  });
+  el.slow.addEventListener('click', () => { S.slow = !S.slow; el.slow.setAttribute('aria-pressed', String(S.slow)); });
+  el.clear.addEventListener('click', () => { S.rows = []; S.n = 0; S.last = {}; renderRows(); });
+  function renderRows() {
+    const tb = el.rows; tb.textContent = '';
+    if (!S.rows.length) { const tr = tb.insertRow(), td = tr.insertCell(); td.colSpan = 4; td.className = 'empty'; td.textContent = nb('Aucune mesure pour l’instant.'); return; }
+    for (const r of S.rows) { const tr = tb.insertRow(); [String(r.n), r.name, r.mass, fr(r.T, 3) + ' s'].forEach((v) => { tr.insertCell().textContent = v; }); }
+  }
+  function toc(heavy) {
+    if (!Snd.on || !Snd.ctx) return;
+    const c = Snd.ctx, t = c.currentTime, src = c.createBufferSource(); src.buffer = Snd.noise;
+    const bp = Snd.filter('bandpass', heavy ? 1500 : 2600, 4), gn = c.createGain();
+    gn.gain.setValueAtTime(heavy ? 1.0 : 0.7, t); gn.gain.exponentialRampToValueAtTime(0.0008, t + 0.1);
+    src.connect(bp); bp.connect(gn); gn.connect(Snd.master); src.start(t, Math.random()); src.stop(t + 0.12);
+  }
+  function step(dt) {
+    S.flash = Math.max(0, S.flash - dt * 1.5); S.tocAge += dt;
+    if (S.phase !== 'fall') return;
+    S.t += dt * (S.slow ? 0.25 : 1);
+    if (S.t >= S.T) {
+      S.t = S.T; S.phase = 'landed'; S.flash = 1; S.tocAge = 0;
+      const b = B[S.ball]; S.n += 1; S.last[S.ball] = S.T;
+      S.rows.unshift({ n: S.n, name: b.name, mass: b.mass, T: S.T }); if (S.rows.length > 8) S.rows.pop();
+      renderRows(); toc(b.heavy);
+    }
+  }
+  function ballY(b) {
+    const r = rDraw(b);
+    if (S.phase === 'hang') return YM + r;
+    const tt = Math.max(0, Math.min(S.t, S.T) - S.delay), y = Math.min(yOf(b, tt), dist(b));
+    return YM + r + y / dist(b) * (PLATE - YM - 2 * r);
+  }
+  function cable(x0, y0, c1, c2, x1, y1) { ctx.beginPath(); ctx.moveTo(x0, y0); ctx.bezierCurveTo(...c1, ...c2, x1, y1); ctx.stroke(); }
+  function draw() {
+    st.begin();
+    const b = B[S.ball], r = rDraw(b);
+    txt(ctx, 'billes dessinées 2,5 fois plus grosses', 8, 14, { align: 'left', size: 11 });
+    if (S.slow) txt(ctx, 'ralenti ×4', 290, 14, { align: 'right', size: 11 });
+    pen(ctx, COL.chalk, 2); ctx.beginPath(); ctx.moveTo(4, 372); ctx.lineTo(356, 372); ctx.stroke();
+    // statif : pied et tige
+    ctx.fillStyle = '#8f9897'; rrect(ctx, 84, 360, 170, 12, 5); ctx.fill();
+    pen(ctx, '#b9c0c2', 4); ctx.beginPath(); ctx.moveTo(128, 34); ctx.lineTo(128, 362); ctx.stroke();
+    // règle graduée et triangles rouges
+    ctx.fillStyle = 'rgba(236,232,220,.9)'; ctx.fillRect(300, 40, 12, 326);
+    pen(ctx, '#3a4642', 1);
+    for (let c = 0; c <= 105; c += 5) { const y = PLATE - c / 100 * SC; ctx.beginPath(); ctx.moveTo(300, y); ctx.lineTo(c % 10 ? 305 : 309, y); ctx.stroke(); }
+    for (let c = 0; c <= 100; c += 20) txt(ctx, String(c), 316, PLATE - c / 100 * SC, { align: 'left', size: 10 });
+    txt(ctx, 'cm', 316, 48, { align: 'left', size: 10 });
+    ctx.fillStyle = COL.red;
+    for (const y of [YM, PLATE]) { ctx.beginPath(); ctx.moveTo(280, y); ctx.lineTo(300, y - 8); ctx.lineTo(300, y + 8); ctx.closePath(); ctx.fill(); }
+    // chronomètre
+    txt(ctx, 'chronomètre', 68, 276, { size: 12 });
+    ctx.fillStyle = '#c9cfd2'; rrect(ctx, 12, 284, 112, 66, 5); ctx.fill();
+    ctx.fillStyle = '#2b3f6b'; ctx.fillRect(12, 287, 6, 60);
+    ctx.fillStyle = '#0d0f0f'; rrect(ctx, 22, 296, 56, 26, 3); ctx.fill();
+    const shown = S.phase === 'hang' ? 0 : Math.min(S.t, S.T);
+    ctx.font = '700 16px ui-monospace, "Courier New", monospace'; ctx.fillStyle = '#ff5a4f'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillText(fr(shown, 3), 74, 309);
+    txt(ctx, 's', 84, 309, { size: 11, color: '#2b3438' });
+    txt(ctx, 'départ', 107, 301, { align: 'right', size: 8, color: '#2b3438' });
+    txt(ctx, 'arrêt', 107, 335, { align: 'right', size: 8, color: '#2b3438' });
+    ctx.fillStyle = '#f0d64a';
+    for (const y of [296, 306, 330, 340]) { ctx.beginPath(); ctx.arc(115, y, 3.2, 0, TAU); ctx.fill(); }
+    // câbles jaunes : aimant vers « départ », plaque vers « arrêt »
+    pen(ctx, 'rgba(240,214,74,.85)', 1.8);
+    cable(204, 50, [196, 22], [156, 246], 115, 296);
+    cable(224, 50, [236, 18], [168, 258], 115, 306);
+    cable(195, 346, [178, 318], [150, 326], 115, 330);
+    cable(233, 346, [244, 320], [156, 352], 115, 340);
+    // porte-aimant et électroaimant
+    ctx.fillStyle = '#1b1f1e'; rrect(ctx, 118, 56, 20, 16, 3); ctx.fill(); ctx.fillRect(138, 59, 60, 9);
+    rrect(ctx, 196, 54, 36, 26, 4); ctx.fill();
+    ctx.fillStyle = '#f0d64a'; ctx.fillRect(201, 46, 6, 9); ctx.fillRect(221, 46, 6, 9);
+    const on = S.phase === 'hang';
+    if (on) { pen(ctx, 'rgba(243,211,107,.6)', 1.2); for (const dx of [-7, 7]) { ctx.beginPath(); ctx.arc(BX + dx, YM + 1, 4, 0.2, Math.PI - 0.2); ctx.stroke(); } }
+    txt(ctx, 'aimant', 240, 98, { align: 'left', size: 11, color: on ? COL.yellow : COL.dim });
+    txt(ctx, on ? 'allumé' : 'coupé', 240, 111, { align: 'left', size: 11, bold: true, color: on ? COL.yellow : COL.dim });
+    // plaque de contact
+    ctx.fillStyle = '#1b1f1e'; rrect(ctx, 188, PLATE, 52, 12, 2); ctx.fill();
+    pen(ctx, 'rgba(236,232,220,.8)', 1.2); ctx.beginPath(); ctx.ellipse(BX, PLATE + 6, 10, 3.5, 0, 0, TAU); ctx.stroke();
+    ctx.fillStyle = '#f0d64a'; ctx.fillRect(192, 344, 6, 8); ctx.fillRect(230, 344, 6, 8);
+    txt(ctx, 'plaque de contact', BX, 382, { size: 11 });
+    if (S.flash > 0) { pen(ctx, `rgba(243,211,107,${S.flash.toFixed(3)})`, 2); ctx.beginPath(); ctx.ellipse(BX, PLATE + 2, 16 + 14 * (1 - S.flash), 5 + 4 * (1 - S.flash), 0, 0, TAU); ctx.stroke(); }
+    // bille
+    const y = ballY(b);
+    const gr = ctx.createRadialGradient(BX - r * 0.35, y - r * 0.35, 0.5, BX, y, r);
+    gr.addColorStop(0, '#ffffff'); gr.addColorStop(0.35, '#c9d1d6'); gr.addColorStop(1, '#5f6a70');
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(BX, y, r, 0, TAU); ctx.fill();
+    if (S.tocAge < 1.1) {
+      const a = 1 - S.tocAge / 1.1;
+      txt(ctx, 'toc', BX + 30, PLATE - 18 - S.tocAge * 14, { hand: true, size: 22, color: `rgba(243,211,107,${a.toFixed(3)})` });
+    }
+  }
+  function ui() {
+    const b = B[S.ball];
+    setText(el.t, fr(S.phase === 'hang' ? 0 : Math.min(S.t, S.T), 3) + ' s');
+    if (S.phase === 'landed') { const tf = S.T - S.delay, v = b.vL * Math.tanh(g * tf / b.vL); setText(el.v, fr(v, 1) + ' m/s (' + fr(v * 3.6, 0) + ' km/h)'); }
+    else setText(el.v, S.phase === 'fall' ? 'en chute' : '?');
+    setText(el.s, fr(dist(b) * 100, 1) + ' cm');
+    const L = S.last; let m;
+    if (S.phase === 'fall') m = 'Le courant de l’aimant est coupé : la bille tombe et le chronomètre tourne…';
+    else if (L.petite && L.grosse) m = 'Petite bille : ' + fr(L.petite, 3) + ' s. Grosse bille : ' + fr(L.grosse, 3) + ' s. Huit fois plus lourde, et pourtant presque le même temps.' + (Math.abs(L.petite - L.grosse) > 0.002 ? ' Les quelques millièmes d’écart viennent de la taille des billes et du lâcher de l’aimant, pas de leur masse.' : '');
+    else if (S.phase === 'landed') m = 'Chute mesurée : ' + fr(S.T, 3) + ' s. Choisissez maintenant l’autre bille et comparez.';
+    else m = (S.ball === 'petite' ? 'La petite' : 'La grosse') + ' bille est tenue par l’électroaimant. Appuyez sur « Lâcher » : le courant est coupé et le chronomètre démarre.';
+    setText(el.status, m);
+  }
+  function audio() {}
+  renderRows();
+  return { stage: st, step, draw, audio, ui };
+})();
+
+/* =====================================================================
+   5. BALLE DANS LE JET : poussée de l'air ½·ρ·C·A·u² le long du jet,
+   rappel vers le centre (air dévié par la surface courbe), poids.
+   Jet : u = U0/(1 + s/s0) · exp(-(r/b)²), b = b0 + kb·s
+   ===================================================================== */
+sims.balle = (() => {
+  const st = makeStage($('#cv-balle'), 360, 360), ctx = st.ctx;
+  const el = { status: $('#st-balle'), s: $('#ro-bas'), r: $('#ro-bar'), out: $('#ba-tilt-out'), on: $('#ba-on'), forces: $('#ba-forces') };
+  const tilt = $('#ba-tilt');
+  const SC = 520, NX = 120, NY = 258, FLOOR = 352;
+  const m = 0.0027, R = 0.02, A = Math.PI * R * R, Cd = 0.45, rho = 1.2, g = 9.81, U0 = 14, s0 = 0.4, b0 = 0.022, kb = 0.11, KAPPA = 1.0;
+  const floorW = -(FLOOR - NY) / SC;
+  const S = { th: 0, thT: 0, on: true, U: U0, x: 0, y: 0.23, vx: 0, vy: 0, showF: true, parts: [], Fd: [0, 0], Fl: [0, 0], t: 0 };
+  const E = () => [Math.sin(S.th), Math.cos(S.th)], N = () => [Math.cos(S.th), -Math.sin(S.th)];
+  const uc = (s) => (s > 0 ? S.U / (1 + s / s0) : 0), bw = (s) => b0 + kb * Math.max(s, 0);
+  function place() { const e = E(); S.x = e[0] * 0.23; S.y = e[1] * 0.23; S.vx = 0; S.vy = 0; }
+  tilt.addEventListener('input', () => { S.thT = tilt.value * Math.PI / 180; });
+  $('#ba-nudge').addEventListener('click', () => { const n = N(), sg = Math.random() < 0.5 ? -1 : 1; S.vx += n[0] * 0.3 * sg; S.vy += n[1] * 0.3 * sg; });
+  $('#ba-reset').addEventListener('click', place);
+  el.forces.addEventListener('click', () => { S.showF = !S.showF; el.forces.setAttribute('aria-pressed', String(S.showF)); });
+  el.on.addEventListener('click', () => {
+    S.on = !S.on; el.on.setAttribute('aria-pressed', String(!S.on));
+    setText(el.on, S.on ? 'Arrêter le sèche-cheveux' : 'Allumer le sèche-cheveux');
+  });
+  function local(x, y) { const e = E(), n = N(); return [x * e[0] + y * e[1], x * n[0] + y * n[1]]; }
+  function physics(h) {
+    const e = E(), n = N(); const [s, r] = local(S.x, S.y);
+    let fx = 0, fy = -m * g, dx = 0, dy = 0, lx = 0, ly = 0;
+    if (s > 0) {
+      const u0 = uc(s), b = bw(s), X = r / b, u = u0 * Math.exp(-X * X);
+      const ux = u * e[0] - S.vx, uy = u * e[1] - S.vy, ur = Math.hypot(ux, uy), k = 0.5 * rho * Cd * A * ur;
+      dx = k * ux; dy = k * uy;
+      const fl = -KAPPA * 0.5 * rho * A * u0 * u0 * X * Math.exp(-X * X);
+      lx = fl * n[0]; ly = fl * n[1];
+    }
+    fx += dx + lx; fy += dy + ly;
+    S.Fd = [dx, dy]; S.Fl = [lx, ly];
+    S.vx += fx / m * h; S.vy += fy / m * h; S.x += S.vx * h; S.y += S.vy * h;
+    // corps du sèche-cheveux (cylindre de la buse jusqu'à 17 cm derrière)
+    let [s2, r2] = local(S.x, S.y);
+    if (s2 < R && s2 > -0.17 && Math.abs(r2) < 0.036 + R) {
+      if (s2 > -0.012) { s2 = R; const vs = S.vx * e[0] + S.vy * e[1]; if (vs < 0) { S.vx -= vs * e[0] * 1.3; S.vy -= vs * e[1] * 1.3; } }
+      else { r2 = Math.sign(r2 || 1) * (0.036 + R); const vr = S.vx * n[0] + S.vy * n[1]; if (vr * r2 < 0) { S.vx -= vr * n[0] * 1.3; S.vy -= vr * n[1] * 1.3; } }
+      S.x = s2 * e[0] + r2 * n[0]; S.y = s2 * e[1] + r2 * n[1];
+    }
+    // sol et bords
+    if (S.y - R < floorW) { S.y = floorW + R; if (S.vy < 0) S.vy *= -0.3; S.vx *= 1 - 4 * h; }
+    const xmin = -NX / SC + R, xmax = (360 - NX) / SC - R;
+    if (S.x < xmin) { S.x = xmin; S.vx = Math.abs(S.vx) * 0.4; }
+    if (S.x > xmax) { S.x = xmax; S.vx = -Math.abs(S.vx) * 0.4; }
+  }
+  function spawnPart(p) { p.age = 0; p.sg = 0; p.s = 0.004 + Math.random() * 0.02; p.r = (Math.random() - 0.5) * 0.044; const e = E(), n = N(); p.x = p.s * e[0] + p.r * n[0]; p.y = p.s * e[1] + p.r * n[1]; p.vx = 0; p.vy = 0; }
+  for (let i = 0; i < 200; i++) { const p = {}; spawnPart(p); p.s = Math.random() * 0.5; const e = E(); p.x = p.s * e[0] + p.r * (1 + p.s * 4) * N()[0]; p.y = p.s * e[1] + p.r * (1 + p.s * 4) * N()[1]; S.parts.push(p); }
+  function moveParts(dt) {
+    const e = E(), n = N(), VIS = 0.045;
+    const [sb, rb] = local(S.x, S.y), xb = rb / bw(sb), a = R * 1.15;
+    for (const p of S.parts) {
+      const [s, r] = local(p.x, p.y);
+      p.age = (p.age || 0) + dt;
+      if (S.U < 0.5 || p.age > 4 || s > 0.62 || s < -0.01 || Math.abs(r) > 3.2 * bw(s)) { spawnPart(p); continue; }
+      const b = bw(s), u = uc(s) * Math.exp(-(r / b) * (r / b));
+      let vs = u, vr = u * kb * r / b; // le jet s'élargit
+      // écoulement autour de la balle (doublet 2D) dans le repère du jet
+      const zs = s - sb, zr = r - rb, d2 = zs * zs + zr * zr;
+      if (d2 < 9 * R * R) {
+        const Ub = Math.max(u, 0.5), re = zs * zs - zr * zr, im = 2 * zs * zr, inv = a * a / (d2 * d2);
+        vs = Ub * (1 - re * inv); vr = Ub * (im * inv);
+        // près du point d'arrêt sous la balle : l'air s'écarte d'un côté ou de l'autre
+        const d = Math.sqrt(d2);
+        if (d < 1.6 * a && zs < 0.3 * a) {
+          if (!p.sg) p.sg = zr === 0 ? (Math.random() < 0.5 ? -1 : 1) : Math.sign(zr);
+          vr += p.sg * Ub * 0.9 * (1 - d / (1.6 * a)); vs = Math.max(vs, 0.25 * Ub);
+        }
+      }
+      // sillage dévié vers l'extérieur quand la balle est décentrée
+      if (zs > 0 && zs < 0.14 && Math.abs(zr) < 3 * R) vr += Math.sign(rb) * Math.min(Math.abs(xb), 1) * 0.6 * u;
+      p.vx = (vs * e[0] + vr * n[0]) * VIS; p.vy = (vs * e[1] + vr * n[1]) * VIS;
+      p.x += p.vx * dt * 1; p.y += p.vy * dt * 1;
+      const [s3, r3] = local(p.x, p.y), d3 = Math.hypot(s3 - sb, r3 - rb);
+      if (d3 < a) { const f = a / d3; const ns = sb + (s3 - sb) * f, nr = rb + (r3 - rb) * f; p.x = ns * e[0] + nr * n[0]; p.y = ns * e[1] + nr * n[1]; }
+    }
+  }
+  function step(dt) {
+    S.t += dt;
+    // on incline à la main : 25° par seconde au plus
+    const dth = S.thT - S.th, maxd = 25 * Math.PI / 180 * dt;
+    S.th += Math.sign(dth) * Math.min(Math.abs(dth), maxd);
+    S.U += ((S.on ? U0 : 0) - S.U) * (1 - Math.exp(-dt / 0.25));
+    const k = Math.max(1, Math.ceil(dt / 0.001)), h = dt / k;
+    for (let i = 0; i < k; i++) physics(h);
+    moveParts(dt);
+  }
+  for (let i = 0; i < 150; i++) step(0.02);
+  const X = (x) => NX + x * SC, Y = (y) => NY - y * SC;
+  function draw() {
+    st.begin();
+    txt(ctx, 'air dessiné au ralenti', 8, 14, { align: 'left', size: 11 });
+    // sol
+    pen(ctx, COL.chalk, 2); ctx.beginPath(); ctx.moveTo(8, FLOOR); ctx.lineTo(352, FLOOR); ctx.stroke();
+    // air
+    if (S.U > 0.5) {
+      pen(ctx, 'rgba(142,200,234,.6)', 1.5);
+      for (const p of S.parts) {
+        ctx.beginPath(); ctx.moveTo(X(p.x), Y(p.y)); ctx.lineTo(X(p.x - p.vx * 0.05), Y(p.y - p.vy * 0.05)); ctx.stroke();
+      }
+    }
+    // sèche-cheveux
+    ctx.save(); ctx.translate(NX, NY); ctx.rotate(S.th);
+    ctx.fillStyle = '#5a6b66'; pen(ctx, COL.chalk, 1.8);
+    rrect(ctx, -0.036 * SC, 0.03 * SC, 0.072 * SC, 0.14 * SC, 8); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-0.036 * SC, 0.03 * SC); ctx.lineTo(-0.024 * SC, 0); ctx.lineTo(0.024 * SC, 0); ctx.lineTo(0.036 * SC, 0.03 * SC); ctx.closePath(); ctx.fill(); ctx.stroke();
+    rrect(ctx, -0.036 * SC - 0.1 * SC, 0.1 * SC, 0.1 * SC, 0.03 * SC, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = S.on ? COL.yellow : '#3a4642'; ctx.beginPath(); ctx.arc(-0.09 * SC, 0.115 * SC, 3, 0, TAU); ctx.fill();
+    ctx.restore();
+    // balle
+    const bx = X(S.x), by = Y(S.y), br = R * SC;
+    const gr = ctx.createRadialGradient(bx - br * 0.35, by - br * 0.35, 1, bx, by, br);
+    gr.addColorStop(0, '#ffffff'); gr.addColorStop(1, '#d9d4c8');
+    ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(bx, by, br, 0, TAU); ctx.fill();
+    // forces (à l'échelle : poids = 46 px)
+    if (S.showF) {
+      const k = 46 / (m * g);
+      arrow(ctx, bx, by, bx, by + m * g * k, COL.blue);
+      arrow(ctx, bx, by, bx + S.Fd[0] * k, by - S.Fd[1] * k, COL.yellow);
+      arrow(ctx, bx, by, bx + S.Fl[0] * k, by - S.Fl[1] * k, COL.pink);
+      const lab = (s, x, y, c) => txt(ctx, s, x, y, { size: 12, color: c, bold: true });
+      lab('poids', bx + 22, by + 44, COL.blue);
+      if (Math.hypot(S.Fd[0], S.Fd[1]) * k > 12) lab('poussée de l’air', bx + S.Fd[0] * k * 1.15 + 38, by - S.Fd[1] * k * 1.15 - 6, COL.yellow);
+      if (Math.hypot(S.Fl[0], S.Fl[1]) * k > 8) lab('rappel', bx + S.Fl[0] * k * 1.3 + Math.sign(S.Fl[0]) * 14, by - S.Fl[1] * k * 1.3 + 12, COL.pink);
+    }
+    // axe du jet
+    if (S.th > 0.02 && S.U > 0.5) {
+      const e = E(); pen(ctx, 'rgba(236,232,220,.25)', 1); ctx.setLineDash([4, 5]);
+      ctx.beginPath(); ctx.moveTo(NX, NY); ctx.lineTo(X(e[0] * 0.5), Y(e[1] * 0.5)); ctx.stroke(); ctx.setLineDash([]);
+      txt(ctx, 'centre du jet', X(e[0] * 0.44) + 8, Y(e[1] * 0.44) - 8, { align: 'left', size: 11 });
+    }
+  }
+  function onFloor() { return S.y - R - floorW < 0.006; }
+  function ui() {
+    setText(el.out, Math.round(S.th * 180 / Math.PI) + '°');
+    const [s, r] = local(S.x, S.y), fallen = onFloor() || s < 0.03;
+    setText(el.s, fallen ? 'au sol' : fr(s * 100, 0) + ' cm');
+    setText(el.r, fallen ? 'hors du jet' : Math.abs(r) < 0.0015 ? 'au centre' : fr(Math.abs(r) * 100, 1) + ' cm ' + (r > 0 ? 'sous le centre' : 'au-dessus du centre'));
+    let msg;
+    const deg = Math.round(S.th * 180 / Math.PI);
+    if (!S.on) msg = fallen ? 'Sans jet d’air, la balle tombe. Rallumez le sèche-cheveux, puis « Remettre la balle ».' : 'Le jet faiblit : la balle tombe.';
+    else if (fallen) msg = 'La balle a quitté le jet. Redressez un peu le sèche-cheveux, puis « Remettre la balle ».';
+    else if (deg < 3) msg = 'La balle flotte au centre du jet. Donnez-lui une pichenette, ou inclinez le sèche-cheveux.';
+    else msg = 'Incliné de ' + deg + '° : la balle se place un peu sous le centre du jet, et y reste. Le rappel (en rose) compense le poids.';
+    setText(el.status, msg);
+  }
+  let nodes = null;
+  function audio(on) {
+    if (on && !nodes && Snd.ctx) {
+      nodes = { src: Snd.noiseSrc(), lp: Snd.filter('lowpass', 1500), hp: Snd.filter('highpass', 180), g: Snd.gain() };
+      nodes.src.connect(nodes.hp); nodes.hp.connect(nodes.lp); nodes.lp.connect(nodes.g); nodes.g.connect(Snd.master);
+    }
+    if (nodes) Snd.set(nodes.g.gain, on ? 0.2 * S.U / U0 : 0, 0.1);
+  }
+  return { stage: st, step, draw, audio, ui };
+})();
+
+/* =====================================================================
+   6. LA FEUILLE QU'ON SOUFFLE
+   Forme de la bande : angle φ(s) = −D·78°·(s/L)^1,4 ; D = 1 bande qui pend,
+   D → 0 bande horizontale. Équilibre en soufflant : D = 1 − 0,88·b^0,8.
+   L'air attaché suit le dessus de la bande et repart selon sa tangente.
+   ===================================================================== */
+sims.feuille = (() => {
+  const st = makeStage($('#cv-feuille'), 360, 290), ctx = st.ctx;
+  const el = { status: $('#st-feuille'), blow: $('#fe-blow'), force: $('#fe-force'), out: $('#fe-force-out'),
+    tip: $('#ro-fetip'), air: $('#ro-feair') };
+  const L = 214, N = 32, X0 = 66, Y0 = 131, PHIMAX = 78 * Math.PI / 180;
+  const S = { blow: false, b: el.force.value / 100, D: 1, beff: 0, t: 0, parts: [], pts: [], phis: [] };
+  el.blow.addEventListener('click', () => {
+    S.blow = !S.blow; el.blow.setAttribute('aria-pressed', String(S.blow));
+    setText(el.blow, S.blow ? 'Arrêter de souffler' : 'Souffler');
+  });
+  el.force.addEventListener('input', () => { S.b = el.force.value / 100; });
+  function shape() {
+    const pts = [[X0, Y0]], phis = []; let x = X0, y = Y0; const ds = L / N;
+    for (let i = 0; i < N; i++) {
+      const s = (i + 0.5) / N;
+      let phi = -S.D * PHIMAX * Math.pow(s, 1.4);
+      phi += 0.05 * S.beff * S.beff * s * Math.sin(15 * S.t - 9 * s);
+      x += Math.cos(phi) * ds; y -= Math.sin(phi) * ds; pts.push([x, y]); phis.push(phi);
+    }
+    S.pts = pts; S.phis = phis;
+  }
+  function at(s) { // point, tangente et normale (côté dessus) à l'abscisse s ∈ [0, 1]
+    const f = clamp(s, 0, 1) * N, i = Math.min(N - 1, Math.floor(f)), u = f - i;
+    const p = [S.pts[i][0] + (S.pts[i + 1][0] - S.pts[i][0]) * u, S.pts[i][1] + (S.pts[i + 1][1] - S.pts[i][1]) * u];
+    const phi = S.phis[i], T = [Math.cos(phi), -Math.sin(phi)], Nn = [T[1], -T[0]];
+    return { p, T, N: Nn };
+  }
+  function spawn(q) {
+    q.att = Math.random() < 0.75; q.s = 0; q.h = q.att ? 2 + Math.random() * 9 : 10 + Math.random() * 12;
+    q.x = X0 - 2; q.y = Y0 - q.h; q.vx = 0; q.vy = 0; q.free = !q.att; q.age = 0; q.k = 0.75 + Math.random() * 0.5;
+  }
+  for (let i = 0; i < 70; i++) { const q = {}; spawn(q); q.age = 99; S.parts.push(q); }
+  shape();
+  function step(dt) {
+    S.t += dt;
+    S.beff += ((S.blow ? S.b : 0) - S.beff) * (1 - Math.exp(-dt / 0.15));
+    const Deq = 1 - 0.88 * Math.pow(S.beff, 0.8);
+    S.D += (Deq - S.D) * (1 - Math.exp(-dt / 0.35));
+    shape();
+    const sp = 150 + 210 * S.beff;
+    for (const q of S.parts) {
+      q.age += dt;
+      if (q.age > 99) { if (S.blow && Math.random() < dt * 2.5) spawn(q); else continue; }
+      if (!q.free) {
+        q.s += sp * q.k * dt / L;
+        if (q.s >= 1) { const a = at(1); q.free = true; q.vx = a.T[0] * sp * q.k; q.vy = a.T[1] * sp * q.k; }
+        else { const a = at(q.s); q.x = a.p[0] + a.N[0] * q.h; q.y = a.p[1] + a.N[1] * q.h; }
+      } else {
+        if (q.vx === 0 && q.vy === 0) { q.vx = sp * q.k; q.vy = (Math.random() - 0.5) * 30; }
+        q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= 1 - 0.6 * dt; q.vy *= 1 - 0.6 * dt;
+      }
+      if (q.x > 372 || q.y > 272 || q.y < -10 || q.age > 3) q.age = 100;
+    }
+  }
+  function draw() {
+    st.begin();
+    txt(ctx, 'air dessiné au ralenti', 352, 14, { align: 'right', size: 11 });
+    // profil du visage
+    pen(ctx, COL.chalk, 2.2);
+    ctx.beginPath(); ctx.moveTo(26, 20); ctx.quadraticCurveTo(40, 60, 46, 78); ctx.lineTo(60, 98); ctx.quadraticCurveTo(62, 104, 52, 106);
+    ctx.quadraticCurveTo(60, 110, 59, 118); ctx.quadraticCurveTo(54, 122, 58, 126); ctx.quadraticCurveTo(62, 134, 54, 138);
+    ctx.quadraticCurveTo(54, 156, 40, 162); ctx.quadraticCurveTo(28, 166, 26, 200); ctx.stroke();
+    ctx.fillStyle = 'rgba(243,154,176,.75)'; ctx.beginPath(); ctx.ellipse(58, 116, 3.5, 3, 0, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.ellipse(59, 128, 3.5, 3, 0, 0, TAU); ctx.fill();
+    // zone de pression plus faible au-dessus de la bande courbe
+    const curved = S.D > 0.05;
+    if (S.beff > 0.05 && curved) {
+      ctx.save(); ctx.globalAlpha = Math.min(0.45, 0.6 * S.beff * S.D + 0.12 * S.beff);
+      pen(ctx, COL.blue, 16); ctx.beginPath(); ctx.moveTo(...at(0.12).p);
+      for (let s = 0.16; s <= 0.95; s += 0.04) { const a = at(s); ctx.lineTo(a.p[0] + a.N[0] * 9, a.p[1] + a.N[1] * 9); }
+      ctx.stroke(); ctx.restore();
+      const a = at(0.42);
+      txt(ctx, 'pression plus faible', a.p[0] + a.N[0] * 34 + 14, a.p[1] + a.N[1] * 34 - 4, { align: 'left', size: 11, color: COL.blue, bold: true });
+    }
+    // air soufflé
+    if (S.beff > 0.02 || S.parts.some((q) => q.age < 3)) {
+      pen(ctx, 'rgba(142,200,234,.7)', 1.5);
+      for (const q of S.parts) {
+        if (q.age > 3) continue;
+        let dx, dy;
+        if (!q.free) { const a = at(q.s); dx = a.T[0]; dy = a.T[1]; } else { const v = Math.hypot(q.vx, q.vy) || 1; dx = q.vx / v; dy = q.vy / v; }
+        ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(q.x - dx * 9, q.y - dy * 9); ctx.stroke();
+      }
+    }
+    // la bande de papier
+    pen(ctx, '#f4f1e8', 3);
+    ctx.beginPath(); ctx.moveTo(...S.pts[0]); for (const p of S.pts.slice(1)) ctx.lineTo(...p); ctx.stroke();
+    ctx.fillStyle = 'rgba(236,232,220,.55)'; rrect(ctx, 56, 132, 16, 9, 4); ctx.fill();
+    txt(ctx, 'bande de papier', 150, 280, { size: 12 });
+    // forces
+    if (S.beff > 0.05) {
+      const tip = at(1);
+      if (curved) {
+        for (const s of [0.35, 0.6, 0.85]) {
+          const a = at(s), Lf = 8 + 18 * S.beff;
+          arrow(ctx, a.p[0] - a.N[0] * (Lf + 4), a.p[1] - a.N[1] * (Lf + 4), a.p[0] - a.N[0] * 3, a.p[1] - a.N[1] * 3, COL.yellow, 2.2);
+        }
+        const a = at(0.47);
+        const Lf = 8 + 18 * S.beff;
+        txt(ctx, 'poussée vers le haut', a.p[0] - a.N[0] * (Lf + 18), a.p[1] - a.N[1] * (Lf + 18), { size: 11, color: COL.yellow, bold: true });
+        arrow(ctx, tip.p[0] + 6, tip.p[1] + 2, tip.p[0] + 6 + tip.T[0] * 34, tip.p[1] + 2 + tip.T[1] * 34, COL.pink, 2.6);
+        txt(ctx, 'air dévié', Math.min(322, tip.p[0] + 6 + tip.T[0] * 34), tip.p[1] + 16 + tip.T[1] * 34, { size: 11, color: COL.pink, bold: true });
+      }
+    }
+  }
+  function ui() {
+    setText(el.out, Math.round(S.b * 100) + ' %');
+    const tipDeg = Math.round(S.D * 78);
+    setText(el.tip, tipDeg <= 1 ? 'à l’horizontale' : tipDeg + '° sous l’horizontale');
+    setText(el.air, S.beff < 0.05 ? 'immobile' : 'dévié vers le bas');
+    let m;
+    if (!S.blow) m = S.D > 0.9 ? 'La bande pend sous la lèvre. Appuyez sur « Souffler ».' : 'Sans souffle, la bande retombe.';
+    else if (S.b < 0.3) m = 'Le souffle est faible : la bande se soulève un peu. Soufflez plus fort.';
+    else m = 'En suivant le dessus courbe de la bande, l’air accélère et sa pression baisse. L’air immobile du dessous pousse alors plus fort : la bande monte.';
+    setText(el.status, m);
+  }
+  let nodes = null;
+  function audio(on) {
+    if (on && !nodes && Snd.ctx) {
+      nodes = { src: Snd.noiseSrc(), f: Snd.filter('bandpass', 1100, 0.8), g: Snd.gain() };
+      nodes.src.connect(nodes.f); nodes.f.connect(nodes.g); nodes.g.connect(Snd.master);
+    }
+    if (nodes) Snd.set(nodes.g.gain, on ? 0.3 * S.beff : 0, 0.06);
+  }
+  return { stage: st, step, draw, audio, ui };
+})();
+
+/* ---------- Navigation par #nom et boucle d'animation ---------- */
+const viewOf = (k) => sims[k].view || k;
+const VIEWS = [...new Set(Object.keys(sims).map(viewOf))];
+let current = null;
+function route(forced) {
+  const h = typeof forced === 'string' ? forced : location.hash.replace('#', '');
+  const v = VIEWS.includes(h) ? h : 'home';
+  document.querySelectorAll('.view').forEach((s) => { s.hidden = s.dataset.view !== v; });
+  current = v === 'home' ? null : v;
+  for (const k of Object.keys(sims)) {
+    if (viewOf(k) !== current) sims[k].audio(false);
+    else { sims[k].stage.resize(); sims[k].draw(); sims[k].ui(); }
+  }
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', () => route());
+function go(v) {
+  route(v);
+  try { if (location.hash.replace('#', '') !== v) location.hash = v; } catch (e) {}
+}
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-go]');
+  if (t) { e.preventDefault(); go(t.dataset.go); }
+});
+document.addEventListener('keydown', (e) => {
+  const t = e.target.closest && e.target.closest('[role="link"][data-go]');
+  if (t && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); go(t.dataset.go); }
+});
+window.addEventListener('resize', () => { for (const k of Object.keys(sims)) if (viewOf(k) === current) sims[k].stage.resize(); });
+const byCanvas = new Map();
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver((entries) => { for (const e of entries) { const sm = byCanvas.get(e.target); if (sm) sm.onscreen = e.isIntersecting; } });
+  for (const k of Object.keys(sims)) { byCanvas.set(sims[k].stage.canvas, sims[k]); io.observe(sims[k].stage.canvas); }
+}
+let last = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, Math.max(0, (now - last) / 1000)); last = now;
+  if (current) {
+    for (const k of Object.keys(sims)) {
+      if (viewOf(k) !== current) continue;
+      const s = sims[k];
+      s.step(dt); if (s.onscreen !== false) s.draw(); s.ui(); s.audio(Snd.on);
+    }
+  }
+  requestAnimationFrame(frame);
+}
+route();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
